@@ -17,10 +17,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('referral_code')->unique();
+            $table->decimal('balance', 8, 2)->default(0);
+            $table->unsignedBigInteger('previous')->nullable();
+            $table->unsignedBigInteger('referred_by')->nullable();
+            $table->unsignedBigInteger('tokens')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
