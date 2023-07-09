@@ -26,7 +26,12 @@ class User extends Authenticatable
         'previous',
         'referred_by',
         'tokens',
+        'type',
+        'status',
+        'last_login',
+        'contact',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,6 +53,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'balance' => 'decimal:2',
         'tokens' => 'integer',
+        'last_login' => 'datetime',
     ];
 
     /**
@@ -68,7 +74,8 @@ class User extends Authenticatable
 
     public function referrals(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(User::class, 'referred_by');
+       //return all users that have this user as their referrer
+        return $this->hasMany(User::class, 'referred_by', 'referral_code');
     }
 
     /**
@@ -79,7 +86,8 @@ class User extends Authenticatable
 
     public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'referred_by');
+        //return the user that referred this user
+        return $this->belongsTo(User::class, 'referral_code', 'referred_by');
     }
 
 

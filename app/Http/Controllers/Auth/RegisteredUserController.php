@@ -31,6 +31,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
@@ -39,6 +40,7 @@ class RegisteredUserController extends Controller
                       'balance' => ['required', 'numeric'],
                        'previous' => ['required', 'numeric'],*/
             'referred_by' => ['nullable', 'string', 'max:255'], // 'referred_by' is now optional
+            'contact' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -50,11 +52,16 @@ class RegisteredUserController extends Controller
             'previous' => 0, // Set initial previous to 0
             'referred_by' => $request->referred_by ?? null, // Assign 'referred_by' only if it's present in the request
             'tokens' => 0, // Set initial tokens to 0
+            'type' => 'user', // Set initial type to 'user'
+            'status' => 'pending', // Set initial status to 'pending'
+            'last_login' => now(), // Set initial last_login to now()
+            'contact' => $request->contact,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+        $user->update(['last_login' => now()]);
 
         // Send verification email
         if(!$user->hasVerifiedEmail()) {
