@@ -1,9 +1,11 @@
 <x-app-layout>
-{{--    <x-slot name="header">
+{{--
+<x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 h-4 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
         </h2>
-    </x-slot>--}}
+    </x-slot>
+    --}}
 
     <section class="flex">
         <div>
@@ -134,6 +136,8 @@
                 </div>
             </div>
         </div>
+        </div>
+
     </section>
     <script>
         var startTime = new Date('{{ Auth::user()->last_login }}');

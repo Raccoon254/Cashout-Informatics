@@ -2,9 +2,154 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 
 class TransactionController extends Controller
 {
+    public function sendMoney(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'amount' => 'required|numeric|min:0.01',
+        ]);
+
+        //check if the user exists
+        $user = User::where('email', $request->email)->first();
+
+        $sender = Auth::user();
+        $recipient = User::where('email', $request->email)->first();
+
+        // Check if recipient exists
+        if(!$recipient) {
+            return back()->with('error', 'Recipient does not exist');
+        }
+
+        // Check if recipient is the same as sender
+        if($sender->id === $recipient->id) {
+            return back()->with('error', 'You cannot send money to yourself');
+        }
+
+        // Check if sender has enough balance
+        if($sender->balance < $request->amount) {
+            return back()->with('error', 'You do not have enough balance');
+        }
+
+        // Create a transaction
+        $transaction = Transaction::create([
+            'user_id' => $sender->id,
+            'transaction_type' => 'send',
+            'from' => $sender->id,
+            'to' => $recipient->id,
+            'amount' => $request->amount,
+            'date' => now(),
+        ]);
+
+        // Update sender and recipient balances
+        $sender->balance -= $request->amount;
+        $sender->save();
+
+        $recipient->balance += $request->amount;
+        $recipient->save();
+
+        return back()->with('success', 'Money sent successfully');
+    }
+
     //
+
+    public function mpesaDeposit(Request $request)
+    {
+        $request->validate([
+            'deposit' => 'required|numeric|min:0.01',
+        ]);
+
+        $user = Auth::user();
+        $amount = $request->deposit;
+        $phone = $user->contact;
+
+        //replace 0 at the beginning with 254
+        if (substr($phone, 0, 1) == "0") {
+            $phone = preg_replace('/^0/', '254', $phone);
+        }
+
+        //remove + at the beginning
+        if (substr($phone, 0, 1) == "+") {
+            $phone = preg_replace('/^+/', '', $phone);
+        }
+
+        $url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+        $curl_post_data = [
+            'BusinessShortCode'=> 174379,
+            'Password'=> 'MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwNzExMTY0MjI3',
+            'Timestamp'=> '20230711164227',
+            'TransactionType'=> 'CustomerPayBillOnline',
+            'Amount' => $amount,
+            'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
+            'PartyB' => 174379,
+            'PhoneNumber' => $phone,
+            'CallBackURL' => 'https://mydomain.com/path',
+            'AccountReference' => 'CompanyXLTD',
+            'TransactionDesc' => "Deposit of KSh. {$amount}"
+        ];
+
+        $data_string = json_encode($curl_post_data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type:application/json',
+            'Authorization:Bearer ' . $this->generateAccessToken(),
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        // Handle the response from M-Pesa here
+
+        // Decode the response from JSON to PHP array
+        $response_data = json_decode($response, true);
+
+        // Check if the response is successful
+        if($response_data['ResponseCode'] == "0") {
+            return back()->with('success', 'Deposit initiated. Please check your phone to complete the transaction');
+        } else {
+            // If not successful, return an error message
+            return back()->with('error', 'There was an error with your request. Please try again.');
+        }
+    }
+
+    public function generateAccessToken()
+    {
+        $consumer_key = 'qj4zu8Ihp9sTAZKTzvKiNXQC6K7RL3Oj';
+        $consumer_secret = '6MmGWDdXQmGH8o0z';
+        $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
+
+        $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $result = json_decode($result);
+        $access_token = $result->access_token;
+
+        curl_close($curl);
+
+        return $access_token;
+    }
+
+
 }
+

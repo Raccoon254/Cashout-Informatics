@@ -14,6 +14,9 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            backgroundImage: {
+                'cashout': "url('C:/Apps/cashout/public/images/cashout.svg')",
+            }
         },
     },
     //require tailwindcss/forms and tailwindcss/typography plugins

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/account', [AccountController::class, 'account'])->name('account.index');
+    Route::post('/send-money', [TransactionController::class, 'sendMoney'])->name('send.money');
+    Route::post('/deposit', [App\Http\Controllers\TransactionController::class, 'mpesaDeposit'])->name('deposit');
+
 });
 
 require __DIR__.'/auth.php';
