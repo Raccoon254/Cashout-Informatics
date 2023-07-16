@@ -39,6 +39,26 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
+        //check if the amount is more than 10,000
+        if($request->amount > 10000) {
+            return back()->with('error', 'You cannot send more than KSh. 10,000');
+        }
+
+        //add transaction fee of 5%
+
+        $transaction_fee = $request->amount * 0.05;
+        $transaction_fee = round($transaction_fee, 2);
+
+        //add transaction fee to the transaction
+        $sender->balance -= $transaction_fee;
+        $sender->save();
+
+        //check if the amount is less than 50
+        if($request->amount < 50) {
+            return back()->with('error', 'You cannot send less than KSh. 50');
+        }
+
+
         // Create a transaction
         $transaction = Transaction::create([
             'user_id' => $sender->id,
@@ -56,7 +76,7 @@ class TransactionController extends Controller
         $recipient->balance += $request->amount;
         $recipient->save();
 
-        return back()->with('success', 'Money sent successfully');
+        return back()->with('success', 'Money sent successfully to ' . $recipient->name);
     }
 
     //
@@ -148,6 +168,41 @@ class TransactionController extends Controller
         curl_close($curl);
 
         return $access_token;
+    }
+
+    //activate account
+    public function activate(Request $request){
+
+        $email = $request->email;
+
+        if (!$email) {
+            return back()->with('error', 'Please enter your email');
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'User does not exist');
+        }
+
+        //deduct 100 from the current auth user balance
+        $sender = Auth::user();
+
+        // Check if sender has enough balance
+        if($sender->balance < 100) {
+            return back()->with('error', 'You do not have enough balance');
+        }
+
+        // Update sender and recipient balances
+        $sender->balance -= 100;
+        $sender->save();
+
+        $user->status = "active";
+        $user->save();
+
+        //return back with username and message of success
+        return back()->with('success', 'Account activated for '.$user->name.' successfully');
+
     }
 
 

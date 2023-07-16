@@ -1,4 +1,4 @@
-<div class="drawer lg:drawer-open">
+<div class="drawer sticky h-full lg:drawer-open">
     <input id="my-drawer" type="checkbox" class="drawer-toggle lg:hidden" />
     <div class="drawer-side z-40 lg:block">
         <label for="my-drawer" class="drawer-overlay lg:hidden"></label>

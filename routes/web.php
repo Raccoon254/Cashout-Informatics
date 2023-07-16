@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'account'])->name('account.index');
     Route::post('/send-money', [TransactionController::class, 'sendMoney'])->name('send.money');
     Route::post('/deposit', [App\Http\Controllers\TransactionController::class, 'mpesaDeposit'])->name('deposit');
-
+    Route::post('/activate', [App\Http\Controllers\TransactionController::class, 'activate'])->name('activate');
 });
 
 require __DIR__.'/auth.php';

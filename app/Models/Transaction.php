@@ -27,4 +27,16 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    //the transaction belongs to the user who received the money too
+    public function recipient(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'to');
+    }
+
+    //the transaction belongs to the user who sent the money too
+    public function sender(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'from');
+    }
 }

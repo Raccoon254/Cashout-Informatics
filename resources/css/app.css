@@ -6,8 +6,16 @@
     @apply flex hover:bg-base-100 active:bg-base-200 active:text-amber-50 text-[15px] py-[10px] px-[16px] mx-[16px] gap-3 md:my-[10px] items-center flex-row rounded;
 }
 
+.sidebar-item-lock{
+    @apply flex tooltip hover:bg-base-100 active:bg-base-200 active:text-amber-50 text-[15px] py-[10px] px-[16px] mx-[16px] gap-3 md:my-[10px] items-center flex-row rounded;
+}
+
 .active{
     @apply bg-blue-400 hover:bg-accent text-amber-50;
+}
+
+.side-lock{
+    @apply text-xs text-gray-700;
 }
 
 .custom-shape-divider-bottom-1689080022 {

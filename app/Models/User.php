@@ -90,5 +90,16 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'referral_code', 'referred_by');
     }
 
+    public function sent_transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class, 'from'); // assuming 'from' is your sender's foreign key
+    }
+
+    public function received_transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class, 'to'); // 'to' is your recipient's foreign key
+    }
+
+
 
 }

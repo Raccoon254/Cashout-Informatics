@@ -13,6 +13,8 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+{{--        <link rel="stylesheet" href="{{ secure_asset('/app.css') }}">
+        <script src="{{ secure_asset('/app.js') }}" defer></script>--}}
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -28,9 +30,22 @@
             @endif
 
             <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+
+            <!-- if the user account status is not verified -->
+
+            @if(Auth::user() && Auth::user()->status == "active")
+
+                <main>
+                    {{ $slot }}
+                </main>
+
+            @else
+
+                <main>
+                    @include('verification.index')
+                </main>
+
+            @endif
         </div>
     </body>
 </html>

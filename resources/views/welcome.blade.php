@@ -10,6 +10,10 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- add assets -->
+{{--        <link rel="stylesheet" href="{{ secure_asset('/app.css') }}">
+        <script src="{{ secure_asset('/app.js') }}" defer></script>--}}
         <style>
             .swiper-slide {
                 height: 80.7vh; /* 2/3 of viewport height */
