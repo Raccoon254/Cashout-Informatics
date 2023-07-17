@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use http\Env;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -156,8 +157,8 @@ class TransactionController extends Controller
 
     public function generateAccessToken()
     {
-        $consumer_key = 'O2RIft9yZASkUhQ4ofGG3dV4GJS6CWAW';
-        $consumer_secret = 'a7E5dfHYX6OyxAgf';
+        $consumer_key = ENV('MPESA_CONSUMER_KEY');
+        $consumer_secret = ENV('MPESA_CONSUMER_SECRET');
         $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
 
         $url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
