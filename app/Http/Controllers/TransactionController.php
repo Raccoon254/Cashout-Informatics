@@ -101,15 +101,21 @@ class TransactionController extends Controller
             $phone = preg_replace('/^+/', '', $phone);
         }
 
-        $url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+        $businessShortCode = 6437090;
+        $passKey = '8932899ac3e8796b539a1befd30ad24294624e973150d2fadc6ac28ee507d553'; // Replace with your PassKey
+        $timestamp = Carbon::rawParse('now')->format('YmdHms');
+
+        $password = base64_encode($businessShortCode.$passKey.$timestamp);
+
+        $url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
         $curl_post_data = [
-            'BusinessShortCode'=> 174379,
-            'Password'=> 'MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwNzExMTY0MjI3',
-            'Timestamp'=> '20230711164227',
+            'BusinessShortCode'=> 6437090,
+            'Password'=> $password,
+            'Timestamp'=> Carbon::rawParse('now')->format('YmdHms'),
             'TransactionType'=> 'CustomerPayBillOnline',
             'Amount' => $amount,
             'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
-            'PartyB' => 174379,
+            'PartyB' => 6437090,
             'PhoneNumber' => $phone,
             'CallBackURL' => 'https://mydomain.com/path',
             'AccountReference' => 'CompanyXLTD',
@@ -137,6 +143,8 @@ class TransactionController extends Controller
         // Decode the response from JSON to PHP array
         $response_data = json_decode($response, true);
 
+        dd($response_data);
+
         // Check if the response is successful
         if($response_data['ResponseCode'] == "0") {
             return back()->with('success', 'Deposit initiated. Please check your phone to complete the transaction');
@@ -148,11 +156,11 @@ class TransactionController extends Controller
 
     public function generateAccessToken()
     {
-        $consumer_key = 'qj4zu8Ihp9sTAZKTzvKiNXQC6K7RL3Oj';
-        $consumer_secret = '6MmGWDdXQmGH8o0z';
+        $consumer_key = 'O2RIft9yZASkUhQ4ofGG3dV4GJS6CWAW';
+        $consumer_secret = 'a7E5dfHYX6OyxAgf';
         $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
 
-        $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        $url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);
