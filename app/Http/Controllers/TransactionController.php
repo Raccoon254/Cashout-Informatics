@@ -118,10 +118,16 @@ class TransactionController extends Controller
             'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
             'PartyB' => 6437090,
             'PhoneNumber' => $phone,
-            'CallBackURL' => 'https://mydomain.com/path',
-            'AccountReference' => 'CompanyXLTD',
+            'CallBackURL' => 'https://cashout.co.ke/mpesa/callback',
+            'AccountReference' => 'CASHOUT KENYA',
             'TransactionDesc' => "Deposit of KSh. {$amount}"
         ];
+
+        $access_token = $this->generateAccessToken();
+        //check if the access token is not null or empty
+        if(empty($access_token)) {
+            return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
+        }
 
         $data_string = json_encode($curl_post_data);
         $ch = curl_init();
@@ -133,7 +139,7 @@ class TransactionController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type:application/json',
-            'Authorization:Bearer ' . $this->generateAccessToken(),
+            'Authorization:Bearer ' . $access_token,
         ]);
 
         $response = curl_exec($ch);
@@ -144,11 +150,14 @@ class TransactionController extends Controller
         // Decode the response from JSON to PHP array
         $response_data = json_decode($response, true);
 
-        dd($response_data);
+        //check the if the response code exists in the response data
+        if(!array_key_exists('ResponseCode', $response_data)) {
+            return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
+        }
 
         // Check if the response is successful
         if($response_data['ResponseCode'] == "0") {
-            return back()->with('success', 'Deposit initiated. Please check your phone to complete the transaction');
+            return back()->with('success', 'Deposit initiated. Please enter your M-pesa pin to complete the transaction.');
         } else {
             // If not successful, return an error message
             return back()->with('error', 'There was an error with your request. Please try again.');
@@ -180,7 +189,8 @@ class TransactionController extends Controller
     }
 
     //activate account
-    public function activate(Request $request){
+    public function activate(Request $request): \Illuminate\Http\RedirectResponse
+    {
 
         $email = $request->email;
 
