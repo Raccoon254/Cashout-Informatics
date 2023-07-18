@@ -112,8 +112,8 @@ class TransactionController extends Controller
         $url = ENV('MPESA_URL');
         $curl_post_data = [
             'BusinessShortCode'=> ENV('PAYBILL_NUMBER'),
-            "Password"=> "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwNzE4MDkwOTIz",
-            "Timestamp"=> "20230718090923",
+            'Password'=> $password,
+            'Timestamp'=> Carbon::rawParse('now')->format('YmdHms'),
             'TransactionType'=> 'CustomerPayBillOnline',
             'Amount' => $amount,
             'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
