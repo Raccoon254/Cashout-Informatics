@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mpesa;
 use App\Models\Transaction;
 use App\Models\User;
 use http\Env;
@@ -103,22 +104,22 @@ class TransactionController extends Controller
         }
 
         $businessShortCode = 6437090;
-        $passKey = '8932899ac3e8796b539a1befd30ad24294624e973150d2fadc6ac28ee507d553'; // Replace with your PassKey
+        $passKey = ENV('MPESA_PASSKEY');
         $timestamp = Carbon::rawParse('now')->format('YmdHms');
 
         $password = base64_encode($businessShortCode.$passKey.$timestamp);
 
-        $url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+        $url = ENV('MPESA_URL');
         $curl_post_data = [
-            'BusinessShortCode'=> 6437090,
-            'Password'=> $password,
-            'Timestamp'=> Carbon::rawParse('now')->format('YmdHms'),
+            'BusinessShortCode'=> ENV('PAYBILL_NUMBER'),
+            "Password"=> "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwNzE4MDkwOTIz",
+            "Timestamp"=> "20230718090923",
             'TransactionType'=> 'CustomerPayBillOnline',
             'Amount' => $amount,
             'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
-            'PartyB' => 6437090,
+            'PartyB' => ENV('PAYBILL_NUMBER'),
             'PhoneNumber' => $phone,
-            'CallBackURL' => 'https://cashout.co.ke/mpesa/callback',
+            'CallBackURL' => ENV('CALLBACK_URL'),
             'AccountReference' => 'CASHOUT KENYA',
             'TransactionDesc' => "Deposit of KSh. {$amount}"
         ];
@@ -149,6 +150,7 @@ class TransactionController extends Controller
 
         // Decode the response from JSON to PHP array
         $response_data = json_decode($response, true);
+        //dd($response_data);
 
         //check the if the response code exists in the response data
         if(!array_key_exists('ResponseCode', $response_data)) {
@@ -157,6 +159,18 @@ class TransactionController extends Controller
 
         // Check if the response is successful
         if($response_data['ResponseCode'] == "0") {
+
+            //record the transaction
+            Mpesa::create([
+                'merchant_request_id' => $response_data['MerchantRequestID'],
+                'checkout_request_id' => $response_data['CheckoutRequestID'],
+                'response_code' => $response_data['ResponseCode'],
+                'response_description' => $response_data['ResponseDescription'],
+                'customer_message' => $response_data['CustomerMessage'],
+                'status' => 'pending',
+            ]);
+
+            //return back with success message
             return back()->with('success', 'Deposit initiated. Please enter your M-pesa pin to complete the transaction.');
         } else {
             // If not successful, return an error message
@@ -170,7 +184,7 @@ class TransactionController extends Controller
         $consumer_secret = ENV('MPESA_CONSUMER_SECRET');
         $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
 
-        $url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        $url = ENV('TOKEN_URL');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);

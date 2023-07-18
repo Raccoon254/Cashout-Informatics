@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -59,9 +61,9 @@ class User extends Authenticatable
     /**
      * Get the user's transactions.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
@@ -69,10 +71,10 @@ class User extends Authenticatable
     /**
      * Get the user's referrals.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
 
-    public function referrals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function referrals(): HasMany
     {
        //return all users that have this user as their referrer
         return $this->hasMany(User::class, 'referred_by', 'referral_code');
@@ -81,21 +83,21 @@ class User extends Authenticatable
     /**
      * Get the user's referrer.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
 
-    public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function referrer(): BelongsTo
     {
         //return the user that referred this user
         return $this->belongsTo(User::class, 'referral_code', 'referred_by');
     }
 
-    public function sent_transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function sent_transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'from'); // assuming 'from' is your sender's foreign key
     }
 
-    public function received_transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function received_transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'to'); // 'to' is your recipient's foreign key
     }
