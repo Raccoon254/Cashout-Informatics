@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\ProfileController;
@@ -28,6 +29,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->name('dashboard');
 
 Route::post('/mpesa/callback', [MpesaController::class, 'handleCallback']);
+Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

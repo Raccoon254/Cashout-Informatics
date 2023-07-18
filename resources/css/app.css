@@ -54,3 +54,15 @@
     background-size: cover;
     background-position: center;
 }
+
+.img-box {
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+}
+
+.img-list i, .img-list-slow i {
+    font-size: 100px; /* Adjust as needed */
+    margin-right: 10px;
+}
