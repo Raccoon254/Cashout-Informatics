@@ -62,7 +62,7 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    <div class="swiper-slide bg-[url('C:/Apps/cashout/public/images/cashout.svg')] h-fit">
+                    <div style="background: url('{{ secure_asset('images/cashout.svg') }}')" class="swiper-slide bg-[url('C:/Apps/cashout/public/images/cashout.svg')] h-fit">
                         {{--<img height="screen" src="/images/dark2.jpg" class="w-full min-h-64 object-cover" alt="image description">--}}
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
                             <h1 class="text-2xl font-semibold text-white">Welcome to Our Cashout</h1>
