@@ -90,7 +90,7 @@
                                             <td>{{ $transaction->id }}</td>
                                             <td>{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
-                                            <td>{{ $transaction->recipient->name }}</td> <!-- Accessing recipient's name -->
+                                            <td><i class="fa-solid fa-caret-up"></i> &nbsp; {{ $transaction->recipient->name ?? "CASHOUT" }}</td> <!-- Accessing recipient's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
                                         </tr>
                                     @endforeach
@@ -101,7 +101,7 @@
                                             <td>{{ $transaction->id }}</td>
                                             <td>{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
-                                            <td>{{ $transaction->sender->name }}</td> <!-- Accessing sender's name -->
+                                            <td><i class="fa-solid fa-caret-down"></i> &nbsp;{{ $transaction->sender->name }}</td> <!-- Accessing sender's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
                                         </tr>
                                     @endforeach

@@ -135,7 +135,7 @@
                                     </div>
 
 
-                                    @if(Auth::user()->balance > 100)
+                                    @if(Auth::user()->balance >= 100)
 
                                         <form class="card w-full sm:w-1/2 rounded bg-base-100 shadow-sm" action="{{ route('activate') }}" method="POST">
                                             @csrf

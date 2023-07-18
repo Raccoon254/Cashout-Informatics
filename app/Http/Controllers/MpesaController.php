@@ -13,27 +13,34 @@ class MpesaController extends Controller
     {
         $data = $request->all();
 
+        Storage::disk('local')->append('data.txt', 'Received data: '.json_encode($data));
+
         if (isset($data['Body']['stkCallback']['ResultCode'])) {
 
             $merchantRequestId = $data['Body']['stkCallback']['MerchantRequestID'];
             $checkoutRequestId = $data['Body']['stkCallback']['CheckoutRequestID'];
 
             // Check if the transaction exists in our database
-            $mpesaTransaction = Mpesa::where('merchant_request_id', $merchantRequestId)
-                ->where('checkout_request_id', $checkoutRequestId)
-                ->first();
+            $mpesaTransaction = Mpesa::where('merchant_request_id', $merchantRequestId)->first();
 
             if ($mpesaTransaction) {
                 $previous_status = $mpesaTransaction->status;
+
+                $metadataItems = $data['Body']['stkCallback']['CallbackMetadata']['Item'];
+
+                $metadata = [];
+                foreach ($metadataItems as $item) {
+                    $metadata[$item['Name']] = $item['Value'] ?? null;
+                }
 
                 // Update the transaction in our database
                 $mpesaTransaction->update([
                     'result_code' => $data['Body']['stkCallback']['ResultCode'],
                     'result_desc' => $data['Body']['stkCallback']['ResultDesc'],
-                    'mpesa_receipt_number' => $data['Body']['stkCallback']['CallbackMetadata']['Item'][1]['Value'],
-                    'transaction_date' => $data['Body']['stkCallback']['CallbackMetadata']['Item'][2]['Value'],
-                    'phone_number' => $data['Body']['stkCallback']['CallbackMetadata']['Item'][3]['Value'],
-                    'amount' => $data['Body']['stkCallback']['CallbackMetadata']['Item'][0]['Value'],
+                    'mpesa_receipt_number' => $metadata['MpesaReceiptNumber'] ?? null,
+                    'transaction_date' => $metadata['TransactionDate'] ?? null,
+                    'phone_number' => $metadata['PhoneNumber'] ?? null,
+                    'amount' => $metadata['Amount'] ?? null,
                     'status' => $data['Body']['stkCallback']['ResultCode'] == 0 ? 'successful' : 'failed'
                 ]);
 
@@ -57,7 +64,7 @@ class MpesaController extends Controller
             }
 
             // Log the error when the transaction does not exist in our database
-            Storage::disk('local')->append('error.txt', 'Transaction not found: MerchantRequestID='.$merchantRequestId.', CheckoutRequestID='.$checkoutRequestId);
+            Storage::disk('local')->append('error.txt', 'Transaction not found: MerchantRequestID='.$merchantRequestId);
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
 

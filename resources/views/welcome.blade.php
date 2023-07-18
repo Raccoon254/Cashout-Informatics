@@ -72,13 +72,13 @@
                             <div class="space-x-4 flex items-center justify-center mt-4">
                                 <!-- Register and login buttons with icons -->
                                 <a href="{{ route('register') }}" class="">
-                                    <button class="btn btn-warning backdrop-blur-md ring-offset-2 rounded-full btn-outline ring-2">
-                                        <i class="fas fa-user-plus mr-2"></i>
+                                    <button class="btn normal-case w-[120px] btn-warning backdrop-blur-md ring-offset-2 rounded-full btn-outline ring-2">
+                                        <i class="fas fa-user-plus mr-1"></i>
                                         Register
                                     </button>
                                 </a>
-                                <a href="{{ route('login') }}" class="btn backdrop-blur-md btn-success rounded-full btn-outline ring-2 ring-offset-2 text-base-100">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>
+                                <a href="{{ route('login') }}" class="btn w-[120px] normal-case backdrop-blur-md btn-success rounded-full btn-outline ring-2 ring-offset-2 text-base-100">
+                                    <i class="fas fa-sign-in-alt mr-1"></i>
                                     Login
                                 </a>
                             </div>

@@ -218,6 +218,11 @@ class TransactionController extends Controller
             return back()->with('error', 'User does not exist');
         }
 
+        //if the user is already active
+        if($user->status == "active") {
+            return back()->with('error', 'Your account is already active');
+        }
+
         //deduct 100 from the current auth user balance
         $sender = Auth::user();
 
@@ -229,6 +234,17 @@ class TransactionController extends Controller
         // Update sender and recipient balances
         $sender->balance -= 100;
         $sender->save();
+
+        //create a transaction from user to cashout kenya
+
+        Transaction::create([
+            'user_id' => $sender->id,
+            'transaction_type' => 'ACTIVATION',
+            'from' => $sender->id,
+            'to' => 'cashout kenya',
+            'amount' => 100,
+            'date' => Carbon::now(),
+        ]);
 
         $user->status = "active";
         $user->save();
