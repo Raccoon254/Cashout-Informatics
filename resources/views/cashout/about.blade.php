@@ -47,9 +47,9 @@
             </dd>
         </dl>
         <div class="mt-4 col-start-1 row-start-3 self-center sm:mt-0 sm:col-start-2 sm:row-start-2 sm:row-span-2 lg:mt-6 lg:col-start-1 lg:row-start-3 lg:row-end-4">
-            <button type="button" class="btn btn-warning font-semibold btn-outline ring ring-orange-700 rounded-full text-white leading-6 py-2 px-3">
+            <a href="{{ route('register') }}" type="button" class="btn btn-warning font-semibold btn-outline ring ring-orange-700 rounded-full text-white leading-6 py-2 px-3">
                 JOIN CASHOUT &nbsp; <i class="fa-solid fa-shield"></i>
-            </button>
+            </a>
         </div>
         <p class="mt-4 text-sm leading-6 col-start-1 sm:col-span-2 lg:mt-6 lg:row-start-4 lg:col-span-1 dark:text-slate-400">
             Cashout Kenya is a community of people who are tired of online scams and are looking for a legit way to make money online.
