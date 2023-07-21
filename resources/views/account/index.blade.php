@@ -1,6 +1,6 @@
 <x-app-layout>
     <section class="flex">
-        <div>
+        <div class="z-40">
             @include('layouts.sidebar')
         </div>
 

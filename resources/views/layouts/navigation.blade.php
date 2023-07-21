@@ -4,9 +4,11 @@
         <div class="navbar-start">
             <!-- Hamburger -->
             <div class="drawer-content lg:w-full">
-                <label for="my-drawer" class="btn btn-circle btn-ghost drawer-button lg:hidden">
-                    <i class="fas fa-bars"></i>
+                <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+                <label for="my-drawer" class="btn btn-circle btn-ghost drawer-button lg:hidden" x-data="{ open: false }">
+                    <i class="fas text-[20px]" :class="{ 'fa-times': open, 'fa-bars': !open }" @click="open = !open"></i>
                 </label>
+
             </div>
             <!--Hamburger -->
         </div>
