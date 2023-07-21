@@ -65,7 +65,7 @@
 <section class="contact-cards grid grid-cols-1 md:mt-8 sm:grid-cols-2 h-auto p-2 sm:p-28 gap-4">
 
     <figure class="md:flex bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800">
-        <img class="w-24 h-24 md:w-48 md:rounded-l-xl object-cover md:h-auto md:rounded-none rounded-full mx-auto" src="https://www.searchenginejournal.com/wp-content/uploads/2022/06/image-search-1600-x-840-px-62c6dc4ff1eee-sej.png" alt="" width="384" height="512">
+        <img class="w-24 h-24 md:w-48 md:rounded-l-xl object-cover md:h-auto md:rounded-none rounded-full mx-auto" src="{{ asset('images/ian.jpg') }}" alt="" width="384" height="512">
         <div class="pt-6 md:p-6 text-center md:text-left space-y-4">
             <blockquote>
                 <p class="text-lg font-medium">

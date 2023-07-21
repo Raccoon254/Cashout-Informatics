@@ -66,3 +66,7 @@
     font-size: 100px; /* Adjust as needed */
     margin-right: 10px;
 }
+
+.menu{
+    z-index: auto;
+}

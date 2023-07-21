@@ -8,13 +8,14 @@
     --}}
 
     <section class="flex w-full">
-        <div class="h-full sticky">
+        <div class="h-full z-50 sticky">
             @include('layouts.sidebar')
         </div>
         <div class="w-full">
             <div class="w-full">
                 <div class="w-full sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg">
+
+                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm container sm:rounded-lg">
                         <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
 
                             <!-- Display greeting according to time of day -->
@@ -39,6 +40,7 @@
                             </div>
 
                                 <div class="mb-4 w-full flex flex-wrap gap-4">
+
                                     <div class="card w-full sm:w-5/12 p-0 rounded bg-base-100 shadow-sm">
                                         <div class="card-body m-[-10px]">
                                             <h2 class="card-title">Balance</h2>
