@@ -8,7 +8,7 @@
     --}}
 
     <section class="flex w-full">
-        <div class="h-full z-50 sticky">
+        <div class="h-full z-30 sticky">
             @include('layouts.sidebar')
         </div>
         <div class="w-full">
