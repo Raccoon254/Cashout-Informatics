@@ -35,7 +35,7 @@
 
             @if(Auth::user() && Auth::user()->status == "active")
 
-                <main>
+                <main class="w-full">
                     {{ $slot }}
                 </main>
 

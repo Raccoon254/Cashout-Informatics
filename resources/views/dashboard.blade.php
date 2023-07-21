@@ -7,13 +7,13 @@
     </x-slot>
     --}}
 
-    <section class="flex">
+    <section class="flex w-full">
         <div class="h-full sticky">
             @include('layouts.sidebar')
         </div>
-        <div>
+        <div class="w-full">
             <div class="w-full">
-                <div class="w-full mx-auto sm:px-6 lg:px-8">
+                <div class="w-full sm:px-6 lg:px-8">
                     <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
 
@@ -117,7 +117,7 @@
                                 <h3 class="text-lg font-semibold">{{ __('Referrals') }}</h3>
                                 <section>
                                     @if(count( Auth::user()->referrals)<=0)
-                                        <div class="text-center p-6 m-6 rounded-lg shadow-sm border border-base-100 hover:bg-base-100">
+                                        <div class="text-center p-1 m-2 sm:p-6 sm:m-6 rounded-lg shadow-sm border border-base-100 hover:bg-base-100">
                                             <div class="my-3 text-lg">You have no referrals</div>
                                             <div class="text-gray-500">
                                                 You can use your referral link or code to invite your friends to join the platform. You will earn 10% of their earnings for life.

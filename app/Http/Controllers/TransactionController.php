@@ -60,7 +60,6 @@ class TransactionController extends Controller
             return back()->with('error', 'You cannot send less than KSh. 50');
         }
 
-
         // Create a transaction
         $transaction = Transaction::create([
             'user_id' => $sender->id,
@@ -104,20 +103,20 @@ class TransactionController extends Controller
         }
 
         $businessShortCode = 6437090;
-        $passKey = ENV('MPESA_PASSKEY');
+        $passKey = ENV('LIVE_MPESA_PASSKEY');
         $timestamp = Carbon::rawParse('now')->format('YmdHms');
 
         $password = base64_encode($businessShortCode.$passKey.$timestamp);
 
-        $url = ENV('MPESA_URL');
+        $url = ENV('LIVE_MPESA_URL');
         $curl_post_data = [
-            'BusinessShortCode'=> ENV('PAYBILL_NUMBER'),
+            'BusinessShortCode'=> ENV('LIVE_SHORT_CODE'),
             'Password'=> $password,
             'Timestamp'=> Carbon::rawParse('now')->format('YmdHms'),
-            'TransactionType'=> 'CustomerPayBillOnline',
+            'TransactionType'=> 'CustomerBuyGoodsOnline',
             'Amount' => $amount,
-            'PartyA' => $phone, // Assuming the user's phone number is stored in the 'phone' field of the User model
-            'PartyB' => ENV('PAYBILL_NUMBER'),
+            'PartyA' => $phone,
+            'PartyB' => ENV('TILL_NUMBER'),
             'PhoneNumber' => $phone,
             'CallBackURL' => ENV('CALLBACK_URL'),
             'AccountReference' => 'CASHOUT KENYA',
@@ -150,7 +149,7 @@ class TransactionController extends Controller
 
         // Decode the response from JSON to PHP array
         $response_data = json_decode($response, true);
-        //dd($response_data);
+        dd($response_data);
 
         //check the if the response code exists in the response data
         if(!array_key_exists('ResponseCode', $response_data)) {
@@ -180,11 +179,11 @@ class TransactionController extends Controller
 
     public function generateAccessToken()
     {
-        $consumer_key = ENV('MPESA_CONSUMER_KEY');
-        $consumer_secret = ENV('MPESA_CONSUMER_SECRET');
+        $consumer_key = ENV('LIVE_MPESA_CONSUMER_KEY');
+        $consumer_secret = ENV('LIVE_MPESA_CONSUMER_SECRET');
         $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
 
-        $url = ENV('TOKEN_URL');
+        $url = ENV('LIVE_TOKEN_URL');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);

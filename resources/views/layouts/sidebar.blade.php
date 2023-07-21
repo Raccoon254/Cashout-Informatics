@@ -30,7 +30,7 @@
                 <i class="fa-solid fa-rectangle-ad"></i>
                 Advertise
             </a>
-            <a class="sidebar-item">
+            <a href="{{ route('about') }}" class="sidebar-item">
                 <i class="fa-regular fa-circle-question"></i>
                 About
             </a>
