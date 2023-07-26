@@ -5,6 +5,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Tailwind CSS -->
         <title>Cashout</title>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+        <meta name="robots" content="index, follow">
+        <meta name="language" content="English">
+        <meta property="og:title" content="Cashout Kenya">
+        <meta property="og:description" content="
+        Cashout Kenya is a community of people who are tired of online scams and are looking for a legit way to make money online.
+        ">
+        <meta property="og:image" content="{{asset('images/Cash Type Blend.png')}}">
+        <meta property="og:url" content="https://cashout.co.ke/">
+
+        <meta name="twitter:card" content="{{asset('images/Cash Type Blend.png')}}">
+        <meta name="twitter:site" content="@cashoutkenya">
+        <meta name="twitter:title" content="Cashout Kenya">
+        <meta name="twitter:description" content="
+        Cashout Kenya is a community of people who are tired of online scams and are looking for a legit way to make money online."/>
+        <meta name="twitter:image" content="{{asset('images/Cash Type Blend.png')}}">
+
+
+
+        <link rel="icon" href="{{ asset('images/fav.png') }}" type="image/png" sizes="16x16">
+        <meta aria-description="
+        Cashout Kenya is a community of people who are tired of online scams and are looking for a legit way to make money online.
+CAUTION: This is not a get rich quick scheme. You will have to work hard to make money. However, we will provide you with the tools and resources you need to succeed.">
+
+        <!--details for search engines-->
+        <meta name="description" content="Cashout Kenya is a community of people who are tired of online scams and are looking for a legit way to make money online.
+CAUTION: This is not a get rich quick scheme. You will have to work hard to make money. However, we will provide you with the tools and resources you need to succeed.">
+
+        <meta name="keywords" content="cashout kenya, cashoutkenya, cashout, kenya, cash, cashout.com,
+        cashoutkenya.com, cashoutkenya.co.ke, cashoutkenya.co.ke, cashoutkenya.co.ke, cashoutkenya.co.ke,
+        pesa, withdraw, money, make money, make money online, make money online in kenya, make money online in kenya,
+        make money online in kenya, make money online in kenya, make money online in kenya, make money online in kenya,
+        free, free money, free money online, free money online in kenya, free money online in kenya,
+        earn, earn money, earn money online, earn money online in kenya, earn money online in kenya,
+        easy, easy money, easy money online, easy money online in kenya, easy money online in kenya," />
         <script src="https://kit.fontawesome.com/af6aba113a.js" crossorigin="anonymous"></script>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
