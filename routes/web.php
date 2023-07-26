@@ -23,6 +23,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/welcome', function () {
+    return redirect('/');
+});
+
 // Inside web.php
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
