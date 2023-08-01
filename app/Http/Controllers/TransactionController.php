@@ -149,7 +149,7 @@ class TransactionController extends Controller
 
         // Decode the response from JSON to PHP array
         $response_data = json_decode($response, true);
-        dd($response_data);
+        //dd($response_data);
 
         //check the if the response code exists in the response data
         if(!array_key_exists('ResponseCode', $response_data)) {
