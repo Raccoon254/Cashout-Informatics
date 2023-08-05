@@ -15,6 +15,7 @@ class TransactionController extends Controller
 {
     public function sendMoney(Request $request): \Illuminate\Http\RedirectResponse
     {
+
         $request->validate([
             'email' => 'required|email',
             'amount' => 'required|numeric|min:0.01',
@@ -82,7 +83,7 @@ class TransactionController extends Controller
 
     //
 
-    public function mpesaDeposit(Request $request)
+    public function mpesaDeposit(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'deposit' => 'required|numeric|min:0.01',
@@ -124,8 +125,8 @@ class TransactionController extends Controller
         ];
 
         $access_token = $this->generateAccessToken();
-        //check if the access token is not null or empty
-        if(empty($access_token)) {
+        //if the access token is null or empty
+        if(!$access_token) {
             return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
         }
 
@@ -167,6 +168,7 @@ class TransactionController extends Controller
                 'response_description' => $response_data['ResponseDescription'],
                 'customer_message' => $response_data['CustomerMessage'],
                 'status' => 'pending',
+
             ]);
 
             //return back with success message
@@ -253,6 +255,67 @@ class TransactionController extends Controller
 
     }
 
+    //withdraw money
+    public function withdraw(Request $request) {
+        // Validate the request
+        $request->validate([
+            'amount' => 'required|numeric',
+        ]);
+
+        // Get the amount
+        $amount = $request->amount;
+
+        // Get the current user
+        $user = Auth::user();
+
+        // Check if the user has enough balance
+        if ($user->balance < $amount) {
+            return back()->with('error', 'You do not have enough balance');
+        }
+
+        // Check if the amount is greater than or equal to 100
+//        if ($amount < 100) {
+//            return back()->with('error', 'You cannot withdraw less than KSh. 100');
+//        }
+
+        // Get the phone number
+        $phone = $user->contact;
+
+        //generate the access token
+        $access_token = $this->generateAccessToken();
+        //if the access token is null or empty
+        if(!$access_token) {
+            return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
+        }
+
+        // Prepare the request data
+        $requestData = [
+            "InitiatorName" => "testapi",
+            "SecurityCredential" => "H71V913jx2nNVaK2d1x7B3zzA5NsNtMz/LC6EZJ1gv84tPOelLJRY6lXQ9RhKyx32ea2yEw7+kNMPKE/gnhVlInh8BwP0s/XBDEvB2kSijtS8YoWlfgVOmIqwkNyVsNYmE6o0ocnxhRS85b6uEFt09wOxfSD+5oWN3/6CQ+LcstqScpg2wuJtNzNQOkGYTfdu19afHlV1dptR4oR7XsfXT5qEsipYxuF2wQIG8bvbFc8JOq8OJgE60m9ZQyeRtTL9OcJEJfJQ6RnMogFYWjao2r1zz7xBiCHg7Ixo2NPZfcIbVoCea8EyB7/Z8FUqGDdRNFdpb3GEeqJ3XcFUs/ghQ==",
+            "CommandID" => "BusinessPayment",
+            "Amount" => $amount,
+            "PartyA" => ENV('LIVE_SHORT_CODE'),
+            "PartyB" => $phone, // Use the user's phone number here
+            "Remarks" => "Test remarks",
+            "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
+            "ResultURL" => "https://mydomain.com/b2c/result",
+            "Occasion" => "",
+        ];
+
+        $ch = curl_init('https://api.safaricom.co.ke/mpesa/b2c/v1/paymentrequest');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData)); // Encode data as JSON
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        //dd($response);
+        echo $response;
+    }
 
 }
 

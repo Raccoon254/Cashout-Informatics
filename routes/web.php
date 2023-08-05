@@ -36,7 +36,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 Route::post('/mpesa/callback', [MpesaController::class, 'handleCallback']);
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     Route::resource('users', UserController::class)->only([
         'index', 'edit', 'update', 'destroy'
     ]);
@@ -45,8 +45,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/account', [AccountController::class, 'account'])->name('account.index');
     Route::post('/send-money', [TransactionController::class, 'sendMoney'])->name('send.money');
-    Route::post('/deposit', [App\Http\Controllers\TransactionController::class, 'mpesaDeposit'])->name('deposit');
-    Route::post('/activate', [App\Http\Controllers\TransactionController::class, 'activate'])->name('activate');
+
+    Route::post('/deposit', [TransactionController::class, 'mpesaDeposit'])->name('deposit');
+    Route::post('/activate', [TransactionController::class, 'activate'])->name('activate');
+
+    //withdraw
+    Route::post('/withdraw', [TransactionController::class, 'withdraw'])->name('withdraw');
 });
 
 require __DIR__.'/auth.php';

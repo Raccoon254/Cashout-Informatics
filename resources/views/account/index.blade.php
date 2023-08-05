@@ -38,6 +38,7 @@
                                 </div>
 
                                 <div class="mb-4 w-full flex flex-wrap gap-4">
+
                                     <div class="card w-full p-0 rounded bg-base-100 shadow-sm">
                                         <div class="card-body m-[-10px]">
                                             <h2 class="card-title">Balance</h2>
@@ -53,6 +54,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Cards -->
 
                                 <div class="mb-4 w-full flex sm:flex-nowrap gap-4 flex-wrap">
 
@@ -90,9 +93,33 @@
                                         </div>
                                     </form>
 
+                                </div>
 
+                                <!-- Cards -->
+
+                                <div class="mb-4 w-full flex sm:flex-nowrap gap-4 flex-wrap">
+
+                                    <form class="card w-full sm:w-1/2 rounded bg-base-100 shadow-sm" action="{{ route('withdraw') }}" method="POST">
+                                        @csrf
+                                        <div class="">
+                                            <div class="card-body m-[-10px]">
+                                                <h2 class="card-title">Withdraw</h2>
+                                                <p>Withdraw Cash to M-Pesa</p>
+
+                                                <input class="input ring ring-orange-700 input-success mb-4" name="amount" type="number" placeholder="Amount">
+                                                <div class="card-actions justify-end">
+                                                    <button data-tip="Withdraw" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
+                                                        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </form>
 
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
