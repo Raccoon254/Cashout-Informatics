@@ -37,9 +37,6 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            /*            'referral_code' => ['unique:'.User::class],
-                      'balance' => ['required', 'numeric'],
-                       'previous' => ['required', 'numeric'],*/
             'referred_by' => ['nullable', 'string', 'max:255'], // 'referred_by' is now optional
             'contact' => ['required', 'string', 'max:255'],
         ]);
