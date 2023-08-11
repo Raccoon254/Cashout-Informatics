@@ -53,18 +53,25 @@ class MpesaController extends Controller
 
                     // If the user exists, update their balance
                     if ($user) {
+
                         $user->balance += $mpesaTransaction->amount;
                         $user->save();
 
                         //create a new transaction
-                        Transaction::create([
+                        $transaction = Transaction::create([
                             'user_id' => $user->id,
                             'transaction_type' => 'DEPOSIT',
-                            'from' => 'mpesa',
+                            'from' => $user->id,
                             'to' => 'account',
                             'amount' => $mpesaTransaction->amount,
                             'date' => Carbon::now(),
                         ]);
+
+                        if (!$transaction) {
+                            // Log the error when a new transaction cannot be created
+                            Storage::disk('local')->append('error.txt', 'Failed to create new transaction');
+                            return response()->json(['status' => 'error', 'message' => 'Failed to create new transaction'], 500);
+                        }
 
                     } else {
                         // Log the error when the user does not exist in our database
