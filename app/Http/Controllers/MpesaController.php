@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mpesa;
+use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,6 +55,17 @@ class MpesaController extends Controller
                     if ($user) {
                         $user->balance += $mpesaTransaction->amount;
                         $user->save();
+
+                        //create a new transaction
+                        Transaction::create([
+                            'user_id' => $user->id,
+                            'transaction_type' => 'DEPOSIT',
+                            'from' => 'mpesa',
+                            'to' => 'account',
+                            'amount' => $mpesaTransaction->amount,
+                            'date' => Carbon::now(),
+                        ]);
+
                     } else {
                         // Log the error when the user does not exist in our database
                         Storage::disk('local')->append('error.txt', 'User not found: PhoneNumber='.$mpesaTransaction->phone_number);

@@ -17,4 +17,8 @@ class DashboardController extends Controller
         // Pass to view
         return view('dashboard', compact('user'));
     }
+
+    public function spin(){
+        return view('spin');
+    }
 }

@@ -168,7 +168,6 @@ class TransactionController extends Controller
                 'response_description' => $response_data['ResponseDescription'],
                 'customer_message' => $response_data['CustomerMessage'],
                 'status' => 'pending',
-
             ]);
 
             //return back with success message
@@ -290,12 +289,12 @@ class TransactionController extends Controller
 
         // Prepare the request data
         $requestData = [
-            "InitiatorName" => "testapi",
+            "InitiatorName" => "",
             "SecurityCredential" => "H71V913jx2nNVaK2d1x7B3zzA5NsNtMz/LC6EZJ1gv84tPOelLJRY6lXQ9RhKyx32ea2yEw7+kNMPKE/gnhVlInh8BwP0s/XBDEvB2kSijtS8YoWlfgVOmIqwkNyVsNYmE6o0ocnxhRS85b6uEFt09wOxfSD+5oWN3/6CQ+LcstqScpg2wuJtNzNQOkGYTfdu19afHlV1dptR4oR7XsfXT5qEsipYxuF2wQIG8bvbFc8JOq8OJgE60m9ZQyeRtTL9OcJEJfJQ6RnMogFYWjao2r1zz7xBiCHg7Ixo2NPZfcIbVoCea8EyB7/Z8FUqGDdRNFdpb3GEeqJ3XcFUs/ghQ==",
             "CommandID" => "BusinessPayment",
             "Amount" => $amount,
             "PartyA" => ENV('LIVE_SHORT_CODE'),
-            "PartyB" => $phone, // Use the user's phone number here
+            "PartyB" => $phone,
             "Remarks" => "Test remarks",
             "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
             "ResultURL" => "https://mydomain.com/b2c/result",

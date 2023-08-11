@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
@@ -40,6 +41,10 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::resource('users', UserController::class)->only([
         'index', 'edit', 'update', 'destroy'
     ]);
+
+    //spin to win
+    Route::get('/spin', [DashboardController::class, 'spin'])->name('spin');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
