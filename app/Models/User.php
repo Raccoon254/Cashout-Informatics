@@ -102,6 +102,9 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class, 'to'); // 'to' is your recipient's foreign key
     }
 
-
+    public function isAdmin(): bool
+    {
+        return $this->type === 'admin';
+    }
 
 }

@@ -27,6 +27,7 @@
 
                             <!-- Display greeting according to time of day -->
                             <div class="mb-4">
+
                                 <section>
                                     <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">
                                         {{ __('Welcome') }} {{ Auth::user()->name }}

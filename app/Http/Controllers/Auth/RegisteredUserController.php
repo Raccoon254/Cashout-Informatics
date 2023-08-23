@@ -43,16 +43,11 @@ class RegisteredUserController extends Controller
 
         $contact = $request->contact;
 
-        //remove the first character if it's a '+'
         if (str_starts_with($contact, '+')) {
             $contact = substr($contact, 1);
         }
 
-        //dd($contact);
-
-        // Check if the first character of the string is '0'
         if (str_starts_with($contact, '0')) {
-            // Replace the first character '0' with '254'
             $contact = '254' . substr($contact, 1);
         }
 
@@ -64,13 +59,13 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'referral_code' => $this->generateReferralCode(),
-            'balance' => 0, // Set initial balance to 0
-            'previous' => 0, // Set initial previous to 0
-            'referred_by' => $request->referred_by ?? null, // Assign 'referred_by' only if it's present in the request
-            'tokens' => 0, // Set initial tokens to 0
-            'type' => 'user', // Set initial type to 'user'
-            'status' => 'pending', // Set initial status to 'pending'
-            'last_login' => now(), // Set initial last_login to now()
+            'balance' => 0,
+            'previous' => 0,
+            'referred_by' => $request->referred_by ?? null,
+            'tokens' => 0,
+            'type' => 'user',
+            'status' => 'pending',
+            'last_login' => now(),
             'contact' => $request->contact,
         ]);
 

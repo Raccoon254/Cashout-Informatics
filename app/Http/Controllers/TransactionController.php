@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Mpesa;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\AccountActivated;
 use http\Env;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
 
 
 class TransactionController extends Controller
@@ -246,6 +248,13 @@ class TransactionController extends Controller
             'date' => Carbon::now(),
         ]);
 
+        //message to the user and admin here
+        $user->notify(new AccountActivated($user));
+
+        // Send notification to all admin users
+        $admins = User::where('type', 'admin')->get();
+        Notification::send($admins, new AccountActivated($user));
+
         $user->status = "active";
         $user->save();
 
@@ -293,7 +302,7 @@ class TransactionController extends Controller
             "SecurityCredential" => "H71V913jx2nNVaK2d1x7B3zzA5NsNtMz/LC6EZJ1gv84tPOelLJRY6lXQ9RhKyx32ea2yEw7+kNMPKE/gnhVlInh8BwP0s/XBDEvB2kSijtS8YoWlfgVOmIqwkNyVsNYmE6o0ocnxhRS85b6uEFt09wOxfSD+5oWN3/6CQ+LcstqScpg2wuJtNzNQOkGYTfdu19afHlV1dptR4oR7XsfXT5qEsipYxuF2wQIG8bvbFc8JOq8OJgE60m9ZQyeRtTL9OcJEJfJQ6RnMogFYWjao2r1zz7xBiCHg7Ixo2NPZfcIbVoCea8EyB7/Z8FUqGDdRNFdpb3GEeqJ3XcFUs/ghQ==",
             "CommandID" => "BusinessPayment",
             "Amount" => $amount,
-            "PartyA" => ENV('LIVE_SHORT_CODE'),
+            "PartyA" => 3038675,
             "PartyB" => $phone,
             "Remarks" => "Test remarks",
             "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
