@@ -8,7 +8,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 class MpesaController extends Controller
 {
     public function handleCallback(Request $request): \Illuminate\Http\JsonResponse
@@ -96,5 +97,35 @@ class MpesaController extends Controller
             'message' => 'Unexpected data received',
             'received_request_data' => $data
         ], 400);
+    }
+
+    public function handleQueueTimeout(Request $request)
+    {
+        // Log the incoming data to a TXT file for queue timeout
+        $logData = json_encode($request->all());
+        $logFileName = 'mpesa_queue_timeout_' . date('Y-m-d_H-i-s') . '.txt';
+        $logFilePath = storage_path('logs/mpesa/') . $logFileName;
+
+        File::put($logFilePath, $logData);
+
+        // Your processing logic for Mpesa queue timeout goes here
+
+        // Return a response if needed
+        return response('Queue timeout callback received and logged.', 200);
+    }
+
+    public function handleResult(Request $request)
+    {
+        // Log the incoming data to a TXT file for result
+        $logData = json_encode($request->all());
+        $logFileName = 'mpesa_result_' . date('Y-m-d_H-i-s') . '.txt';
+        $logFilePath = storage_path('logs/mpesa/') . $logFileName;
+
+        File::put($logFilePath, $logData);
+
+        // Your processing logic for Mpesa result goes here
+
+        // Return a response if needed
+        return response('Result callback received and logged.', 200);
     }
 }

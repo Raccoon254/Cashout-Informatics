@@ -35,6 +35,11 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->name('dashboard');
 
 Route::post('/mpesa/callback', [MpesaController::class, 'handleCallback']);
+Route::post('/mpesa/queue', [MpesaController::class, 'handleQueueTimeout'])
+    ->name('mpesa.queue');
+
+Route::post('/mpesa/result', [MpesaController::class, 'handleResult'])
+    ->name('mpesa.result');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 Route::middleware(['auth','verified'])->group(function () {
@@ -56,6 +61,9 @@ Route::middleware(['auth','verified'])->group(function () {
 
     //withdraw
     Route::post('/withdraw', [TransactionController::class, 'withdraw'])->name('withdraw');
+
+    //test
+    Route::get('/test', [TransactionController::class, 'test'])->name('test');
 });
 
 require __DIR__.'/auth.php';

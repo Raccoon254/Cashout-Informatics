@@ -10,7 +10,9 @@ use http\Env;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 
 class TransactionController extends Controller
@@ -298,11 +300,12 @@ class TransactionController extends Controller
 
         // Prepare the request data
         $requestData = [
-            "InitiatorName" => "",
+            "InitiatorName" => "CASHOUT",
+            "OriginatorConversationID" => "CASHOUT".rand(100000, 999999).Str::random(5),
             "SecurityCredential" => "H71V913jx2nNVaK2d1x7B3zzA5NsNtMz/LC6EZJ1gv84tPOelLJRY6lXQ9RhKyx32ea2yEw7+kNMPKE/gnhVlInh8BwP0s/XBDEvB2kSijtS8YoWlfgVOmIqwkNyVsNYmE6o0ocnxhRS85b6uEFt09wOxfSD+5oWN3/6CQ+LcstqScpg2wuJtNzNQOkGYTfdu19afHlV1dptR4oR7XsfXT5qEsipYxuF2wQIG8bvbFc8JOq8OJgE60m9ZQyeRtTL9OcJEJfJQ6RnMogFYWjao2r1zz7xBiCHg7Ixo2NPZfcIbVoCea8EyB7/Z8FUqGDdRNFdpb3GEeqJ3XcFUs/ghQ==",
             "CommandID" => "BusinessPayment",
             "Amount" => $amount,
-            "PartyA" => 3038675,
+            "PartyA" => ENV('LIVE_SHORT_CODE'),
             "PartyB" => $phone,
             "Remarks" => "Test remarks",
             "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
@@ -310,7 +313,7 @@ class TransactionController extends Controller
             "Occasion" => "",
         ];
 
-        $ch = curl_init('https://api.safaricom.co.ke/mpesa/b2c/v1/paymentrequest');
+        $ch = curl_init('https://api.safaricom.co.ke/mpesa/b2c/v2/paymentrequest');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $access_token,
             'Content-Type: application/json'
@@ -323,6 +326,29 @@ class TransactionController extends Controller
 
         //dd($response);
         echo $response;
+    }
+
+    public function test(Request $request): string
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer XWkkeGWzmnsa6EswAdwbFA5FlB0K',
+            'Content-Type' => 'application/json',
+        ])->post('https://sandbox.safaricom.co.ke/mpesa/b2c/v2/paymentrequest', [
+            "OriginatorConversationID" => "7e5c512d-34dc-42fc-babf-daf15be8f0b2",
+            "InitiatorName" => "Cashout Kenya",
+            "SecurityCredential" => "lDIKPQiECBO9cbLV/MHbZLYXAiviXZMNs2F8wNJrCFoz5AgmW8klC4/9s2j9g1cYE7UNgOXpRHtuLgmHIXqh2MiW7z28AHq5P5BbgLKMM3eJj9AtEkp8rM+Vxfgvk8jdozqhXxwv4ISj0qvUfa0OLiU925J0qzkiiFM2g0WgKjU3clVjfGvZoeIlK6uNJ1XmXNKvgMlFbu3zFBMuX5E1sScMtenxQwOaSwnxpG7UbjKYMzB6oqHCR1nBPe0OdflSVomGczNpWSniOyGmXBzJUYIM/6dSp7fCg3oNm3uKIOoDsv/0sGfUsV1gVT5Bfb6wgfWo0DyYLywS9JUfuRx3Lg==",
+            "CommandID" => "SalaryPayment",
+            "Amount" => 10,
+            "PartyA" => 600995,
+            "PartyB" => 254758481320,
+            "Remarks" => "Test remarks",
+            "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
+            "ResultURL" => "https://mydomain.com/b2c/result",
+            "Occasion" => "",
+        ]);
+
+        dd($response->body());
+        return $response->body();
     }
 
 }
