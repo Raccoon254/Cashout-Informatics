@@ -12,8 +12,8 @@ class AddTypeAndStatusToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('type', ['user', 'users'])->default('user'); // 'type' column with 'user' as default
-            $table->enum('status', ['activated', 'not_activated'])->default('not_activated'); // 'status' column with 'not_activated' as default
+            $table->enum('type', ['user', 'admin','super_admin'])->default('user'); // 'type' column with 'user' as default
+            $table->enum('status', ['active', 'not_activated'])->default('not_activated'); // 'status' column with 'not_activated' as default
         });
     }
 

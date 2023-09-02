@@ -6,6 +6,7 @@ use App\Models\Mpesa;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Notifications\AccountActivated;
+use App\Notifications\ReferralBonusNotification;
 use http\Env;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,12 +99,12 @@ class TransactionController extends Controller
         $phone = $user->contact;
 
         //replace 0 at the beginning with 254
-        if (substr($phone, 0, 1) == "0") {
+        if (str_starts_with($phone, "0")) {
             $phone = preg_replace('/^0/', '254', $phone);
         }
 
         //remove + at the beginning
-        if (substr($phone, 0, 1) == "+") {
+        if (str_starts_with($phone, "+")) {
             $phone = preg_replace('/^+/', '', $phone);
         }
 
@@ -131,7 +132,7 @@ class TransactionController extends Controller
         $access_token = $this->generateAccessToken();
         //if the access token is null or empty
         if(!$access_token) {
-            return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
+            return back()->with('error', 'There was a server Error. Please Contact Our Customer Care.');
         }
 
         $data_string = json_encode($curl_post_data);
@@ -235,20 +236,63 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
-        // Update sender and recipient balances
+        // Update sender balances
         $sender->balance -= 100;
         $sender->save();
 
-        //create a transaction from user to cashout kenya
 
-        Transaction::create([
-            'user_id' => $sender->id,
-            'transaction_type' => 'ACTIVATION',
-            'from' => $sender->id,
-            'to' => 'cashout kenya',
-            'amount' => 100,
-            'date' => Carbon::now(),
-        ]);
+
+        // Check if the user has a referrer
+        if (!$user->referred_by==null) {
+            $referrer_code = $user->referred_by;
+
+            $referrer = User::where('referral_code', $referrer_code)->first();
+
+            $activationAmount =100;
+            $referralAmount = 0.7 * $activationAmount;
+
+            // Update the referrer's balance
+            $referrer->balance += $referralAmount;
+            $referrer->save();
+
+            // Create a transaction for the referral bonus
+            Transaction::create([
+                'user_id' => $referrer->id,
+                'transaction_type' => 'REFERRAL_BONUS',
+                'from' => $user->id,
+                'to' => $referrer->id,
+                'amount' => $referralAmount,
+                'date' => Carbon::now(),
+            ]);
+
+
+            //notify the referrer
+            $referrer->notify(new ReferralBonusNotification($referrer, $user));
+
+            //create a transaction from user to cashout kenya
+
+            Transaction::create([
+                'user_id' => $sender->id,
+                'transaction_type' => 'ACTIVATION',
+                'from' => $sender->id,
+                'to' => 'cashout kenya',
+                'amount' => 0.3 * $activationAmount,
+                'date' => Carbon::now(),
+            ]);
+
+
+        }else{
+
+            //create a transaction from user to cashout kenya
+            Transaction::create([
+                'user_id' => $sender->id,
+                'transaction_type' => 'ACTIVATION',
+                'from' => $sender->id,
+                'to' => 'cashout kenya',
+                'amount' => 100,
+                'date' => Carbon::now(),
+            ]);
+        }
 
         //message to the user and admin here
         $user->notify(new AccountActivated($user));
@@ -283,73 +327,20 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
-        // Check if the amount is greater than or equal to 100
-//        if ($amount < 100) {
-//            return back()->with('error', 'You cannot withdraw less than KSh. 100');
-//        }
+         //Check if the amount is greater than or equal to 100
+        if ($amount < 100) {
+            return back()->with('error', 'You cannot withdraw less than KSh. 100');
+        }
 
         // Get the phone number
         $phone = $user->contact;
 
-        //generate the access token
-        $access_token = $this->generateAccessToken();
-        //if the access token is null or empty
-        if(!$access_token) {
-            return back()->with('error', 'There was a server Error. Please Contacts Our Customer Care.');
-        }
+        // create the withdrawal request and send notifications to both user and admins
 
-        // Prepare the request data
-        $requestData = [
-            "InitiatorName" => "CASHOUT",
-            "OriginatorConversationID" => "CASHOUT".rand(100000, 999999).Str::random(5),
-            "SecurityCredential" => "H71V913jx2nNVaK2d1x7B3zzA5NsNtMz/LC6EZJ1gv84tPOelLJRY6lXQ9RhKyx32ea2yEw7+kNMPKE/gnhVlInh8BwP0s/XBDEvB2kSijtS8YoWlfgVOmIqwkNyVsNYmE6o0ocnxhRS85b6uEFt09wOxfSD+5oWN3/6CQ+LcstqScpg2wuJtNzNQOkGYTfdu19afHlV1dptR4oR7XsfXT5qEsipYxuF2wQIG8bvbFc8JOq8OJgE60m9ZQyeRtTL9OcJEJfJQ6RnMogFYWjao2r1zz7xBiCHg7Ixo2NPZfcIbVoCea8EyB7/Z8FUqGDdRNFdpb3GEeqJ3XcFUs/ghQ==",
-            "CommandID" => "BusinessPayment",
-            "Amount" => $amount,
-            "PartyA" => ENV('LIVE_SHORT_CODE'),
-            "PartyB" => $phone,
-            "Remarks" => "Test remarks",
-            "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
-            "ResultURL" => "https://mydomain.com/b2c/result",
-            "Occasion" => "",
-        ];
 
-        $ch = curl_init('https://api.safaricom.co.ke/mpesa/b2c/v2/paymentrequest');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData)); // Encode data as JSON
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($ch);
-        curl_close($ch);
 
-        //dd($response);
-        echo $response;
     }
 
-    public function test(Request $request): string
-    {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer XWkkeGWzmnsa6EswAdwbFA5FlB0K',
-            'Content-Type' => 'application/json',
-        ])->post('https://sandbox.safaricom.co.ke/mpesa/b2c/v2/paymentrequest', [
-            "OriginatorConversationID" => "7e5c512d-34dc-42fc-babf-daf15be8f0b2",
-            "InitiatorName" => "Cashout Kenya",
-            "SecurityCredential" => "lDIKPQiECBO9cbLV/MHbZLYXAiviXZMNs2F8wNJrCFoz5AgmW8klC4/9s2j9g1cYE7UNgOXpRHtuLgmHIXqh2MiW7z28AHq5P5BbgLKMM3eJj9AtEkp8rM+Vxfgvk8jdozqhXxwv4ISj0qvUfa0OLiU925J0qzkiiFM2g0WgKjU3clVjfGvZoeIlK6uNJ1XmXNKvgMlFbu3zFBMuX5E1sScMtenxQwOaSwnxpG7UbjKYMzB6oqHCR1nBPe0OdflSVomGczNpWSniOyGmXBzJUYIM/6dSp7fCg3oNm3uKIOoDsv/0sGfUsV1gVT5Bfb6wgfWo0DyYLywS9JUfuRx3Lg==",
-            "CommandID" => "SalaryPayment",
-            "Amount" => 10,
-            "PartyA" => 600995,
-            "PartyB" => 254758481320,
-            "Remarks" => "Test remarks",
-            "QueueTimeOutURL" => "https://mydomain.com/b2c/queue",
-            "ResultURL" => "https://mydomain.com/b2c/result",
-            "Occasion" => "",
-        ]);
-
-        dd($response->body());
-        return $response->body();
-    }
 
 }
 

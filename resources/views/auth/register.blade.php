@@ -74,7 +74,10 @@
 
         @else
             <div class="mt-4">
-                <x-input-label for="referred_by" :value="__('Enter Referral Code')" />
+                <section class="flex gap-2 items-center">
+                    <x-input-label for="referred_by" :value="__('Enter Referral Code')" />
+                    <span class="text-xs text-blue-400">[Optional]</span>
+                </section>
                 <x-text-input id="referred_by" class="block mt-1 w-full" type="text" name="referred_by" :value="old('referred_by')" />
                 <x-input-error :messages="$errors->get('referred_by')" class="mt-2" />
             </div>

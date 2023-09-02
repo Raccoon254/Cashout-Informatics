@@ -64,7 +64,7 @@ class RegisteredUserController extends Controller
             'referred_by' => $request->referred_by ?? null,
             'tokens' => 0,
             'type' => 'user',
-            'status' => 'pending',
+            'status' => 'not_activated',
             'last_login' => now(),
             'contact' => $request->contact,
         ]);

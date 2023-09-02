@@ -6,6 +6,7 @@ use App\Models\Mpesa;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -99,7 +100,7 @@ class MpesaController extends Controller
         ], 400);
     }
 
-    public function handleQueueTimeout(Request $request)
+    public function handleQueueTimeout(Request $request): Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         // Log the incoming data to a TXT file for queue timeout
         $logData = json_encode($request->all());
@@ -114,7 +115,7 @@ class MpesaController extends Controller
         return response('Queue timeout callback received and logged.', 200);
     }
 
-    public function handleResult(Request $request)
+    public function handleResult(Request $request): Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         // Log the incoming data to a TXT file for result
         $logData = json_encode($request->all());
@@ -123,9 +124,6 @@ class MpesaController extends Controller
 
         File::put($logFilePath, $logData);
 
-        // Your processing logic for Mpesa result goes here
-
-        // Return a response if needed
         return response('Result callback received and logged.', 200);
     }
 }

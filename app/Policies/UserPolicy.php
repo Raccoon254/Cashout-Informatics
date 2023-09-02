@@ -11,7 +11,7 @@ class UserPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->type === 'admin';
+        return $user->type === 'admin'|| $user->type === 'super_admin';
     }
 
     public function update(User $user, User $model): bool

@@ -107,4 +107,10 @@ class User extends Authenticatable
         return $this->type === 'admin';
     }
 
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+
 }
