@@ -37,7 +37,7 @@
             @auth
                 <!-- Notifications -->
                 <a class="indicator" href="{{ route('notifications.user') }}">
-                    <span class="indicator-item bg-primary text-xs px-1 rounded-full">
+                    <span class="indicator-item bg-orange-500 flex items-center justify-center text-gray-50 w-[15px] h-[15px] border text-xs px-1 rounded-full">
                         <!-- Get the total count of unread notifications -->
                         {{ Auth::user()->unreadNotificationCount() }}
                     </span>
@@ -77,20 +77,20 @@
                     </x-dropdown>
                 </div>
 
-                <section class="btn mx-1 btn-ghost btn-circle">
-                    <div class="indicator">
+{{--                <section class="btn mx-1 btn-ghost btn-circle">--}}
+{{--                    <div class="indicator">--}}
 
-                        <i class="text-2xl fa-solid fa-circle-user"></i>
+{{--                        <i class="text-2xl fa-solid fa-circle-user"></i>--}}
 
-                        <!-- if the user status is active -->
-                        @if(Auth()->user()->status == 'active')
-                            <span class="badge badge-xs badge-success indicator-item"></span>
-                        @else
-                            <span class="badge badge-xs bg-red-600 indicator-item"></span>
-                        @endif
+{{--                        <!-- if the user status is active -->--}}
+{{--                        @if(Auth()->user()->status == 'active')--}}
+{{--                            <span class="badge badge-xs badge-success indicator-item"></span>--}}
+{{--                        @else--}}
+{{--                            <span class="badge badge-xs bg-red-600 indicator-item"></span>--}}
+{{--                        @endif--}}
 
-                    </div>
-                </section>
+{{--                    </div>--}}
+{{--                </section>--}}
             </div>
 
             <div class="flex items-center sm:hidden">
