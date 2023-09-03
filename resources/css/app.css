@@ -99,3 +99,7 @@
     background: orangered;
     height: 5px;
 }
+
+.custom-z{
+    z-index: 9999 !important;
+}

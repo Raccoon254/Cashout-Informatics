@@ -19,6 +19,11 @@ class UserPolicy
         return $user->type === 'admin';
     }
 
+    public function view(User $user, User $model): bool
+    {
+        return $user->type === 'admin' || $user->id === $model->id;
+    }
+
     public function delete(User $user, User $model): bool
     {
         return $user->type === 'admin';

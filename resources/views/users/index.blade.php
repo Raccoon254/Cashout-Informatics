@@ -1,9 +1,14 @@
-<!-- resources/views/users/index.blade.php -->
-
 <x-app-layout>
-    <div class="container">
-        <h1>Users</h1>
-        <table class="table tab-bordered table-zebra">
+    <div class="flex">
+        <section class="z-50">
+            @include('admin.sidebar')
+        </section>
+
+        <section class="px-4 w-full">
+            <center class="text-3xl font-semibold my-4">Users</center>
+
+            @include('session.alerts')
+        <table class="table table-zebra">
             <thead>
             <tr>
                 <th>Name</th>
@@ -16,25 +21,26 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>
-                        <div class="flex gap-3">
-                            <a href="{{ route('users.edit', $user) }}">
-                                <button class="btn btn-xs btn-circle">
-                                    <i class="fas fa-edit"></i>
+                    <td class="">
+                        <div class="flex gap-4">
+                            <a class="tooltip tooltip-warning" data-tip="Edit {{ $user->name }}" href="{{ route('users.edit', $user) }}">
+                                <button class="btn btn-sm btn-ghost ring btn-circle">
+                                    <i class="fa-solid fa-pen-nib"></i>
                                 </button>
                             </a>
-                            <form method="POST" action="{{ route('users.destroy', $user) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-xs btn-circle focus:ring-red-500">
-                                    <i class="fas fa-trash"></i>
+
+                            <a class="tooltip tooltip-warning" data-tip="Show {{ $user->name }}" href="{{ route('users.show', $user) }}">
+                                <button class="btn btn-sm btn-ghost ring btn-circle">
+                                    <i class="fas fa-mountain"></i>
                                 </button>
-                            </form>
+                            </a>
+
                         </div>
                     </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
+        </section>
     </div>
 </x-app-layout>

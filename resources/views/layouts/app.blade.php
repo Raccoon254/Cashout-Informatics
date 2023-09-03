@@ -53,7 +53,9 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen">
-            @include('layouts.navigation')
+            <section class="z-50 custom-z sticky top-0">
+                @include('layouts.navigation')
+            </section>
 
             <!-- Page Heading -->
             @if (isset($header))

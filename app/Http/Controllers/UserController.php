@@ -41,6 +41,14 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
+    //show
+    public function show(User $user): View
+    {
+        $this->authorize('view', $user);
+
+        return view('users.show', compact('user'));
+    }
+
     /**
      * Update the specified user in storage.
      *
@@ -55,7 +63,7 @@ class UserController extends Controller
 
         $user->update($request->all());
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User updated successfully');
     }
 
     /**

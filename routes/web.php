@@ -46,7 +46,7 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::middleware(['auth','verified'])->group(function () {
 
     Route::resource('users', UserController::class)->only([
-        'index', 'edit', 'update', 'destroy'
+        'index', 'edit', 'update', 'destroy', 'show'
     ]);
 
     //spin to win
@@ -67,7 +67,7 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::resource('withdrawals', WithdrawController::class);
     Route::get('/user-withdrawals', [WithdrawController::class, 'userWithdrawals'])->name('user.withdrawals');
 
-    Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
+    Route::get('/admin', [DashboardController::class, 'admin'])->name('admin')->middleware('can:manage');
 });
 
 require __DIR__.'/auth.php';
