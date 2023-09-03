@@ -23,7 +23,7 @@
                 Users
             </a>
 
-            <a class="sidebar-item" href="">
+            <a class="sidebar-item" href="{{ route('notifications.index') }}">
                 <i class="fa-solid fa-bell"></i>
                 Notifications
             </a>

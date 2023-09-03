@@ -112,5 +112,44 @@ class User extends Authenticatable
         return $this->hasMany(Withdrawal::class);
     }
 
+    public function unreadNotificationCount(): int
+    {
+        $unreadCount = 0;
+
+        // Loop through each notification associated with the user
+        $notifications = $this->allNotifications();
+        foreach ($notifications as $notification) {
+            if (!$notification->isReadByUser($this->id)) {
+                $unreadCount++;
+            }
+        }
+
+        return $unreadCount;
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+    public function unreadNotifications(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Notification::unreadForUser($this->id)->get();
+    }
+
+    public function readNotifications(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Notification::readForUser($this->id)->get();
+    }
+
+    public function allNotifications(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Notification::allForUser($this->id)->get();
+    }
+
+    //get unread notifications
+    public function getUnreadNotificationsAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->unreadNotifications();
+    }
 
 }

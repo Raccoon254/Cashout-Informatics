@@ -20,7 +20,20 @@
         </div>
         <div class="navbar-end">
 
-            <div class="hidden sm:flex">
+            @auth
+                <!-- Notifications -->
+                <a class="indicator" href="{{ route('notifications.user') }}">
+                    <span class="indicator-item bg-primary text-xs px-1 rounded-full">
+                        <!-- Get the total count of unread notifications -->
+                        {{ Auth::user()->unreadNotificationCount() }}
+                    </span>
+                    <section class="btn btn-sm btn-circle">
+                        <i class="fa-solid fa-bell"></i>
+                    </section>
+                </a>
+            @endauth
+
+            <div class="hidden sm:flex sm:items-center">
 
                 <!-- Settings Dropdown -->
                 <div class="hidden mx-1 sm:flex sm:items-center">

@@ -23,6 +23,18 @@
                 Withdrawals
             </a>
 
+            <a class="sidebar-item" href="{{ route('notifications.user') }}">
+                <i class="fa-solid fa-bell"></i>
+                Notifications
+            </a>
+
+            @can('manage')
+                <a class="sidebar-item" href="{{ route('admin') }}">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    Admin Section
+                </a>
+            @endcan
+
             <a class="sidebar-item">
                 <i class="fa-solid fa-crosshairs"></i>
                 Spin & Win
