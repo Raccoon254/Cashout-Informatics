@@ -18,7 +18,7 @@
                 Account
             </a>
 
-            <a class="sidebar-item" href="{{ route('user.withdrawals') }}">
+            <a href="{{ route('user.withdrawals') }}" class="sidebar-item {{ Route::is('user.withdrawals') ? 'active' : '' }}">
                 <i class="fa-solid fa-coins"></i>
                 Withdrawals
             </a>
@@ -27,13 +27,6 @@
                 <i class="fa-solid fa-bell"></i>
                 Notifications
             </a>
-
-            @can('manage')
-                <a class="sidebar-item" href="{{ route('admin') }}">
-                    <i class="fa-solid fa-screwdriver-wrench"></i>
-                    Admin Section
-                </a>
-            @endcan
 
             <a class="sidebar-item">
                 <i class="fa-solid fa-crosshairs"></i>
@@ -51,6 +44,13 @@
                 <i class="fa-regular fa-circle-question"></i>
                 About
             </a>
+
+            @can('manage')
+                <a class="sidebar-item bg-red-500" href="{{ route('admin') }}">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    Admin Section
+                </a>
+            @endcan
         </section>
 
     </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html data-theme="{{ session('theme', 'light') }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
         <script src="{{ secure_asset('/app.js') }}" defer></script>--}}
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -82,5 +82,96 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
 
             @endif
         </div>
+
+        <script>
+
+            const fetchUrl = "{{ route('get-theme') }}"
+            const setUrl = "{{ route('set-theme') }}"
+            // Function to set the theme in session
+
+            const setThemeInSession = (theme) => {
+                fetch(setUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ theme }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to set theme in session.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            };
+
+            // Function to get the theme from session
+            const getThemeFromSession = () => {
+                return fetch(fetchUrl, {
+                    method: 'GET',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to get theme from session.');
+                        }
+                    })
+                    .then(data => {
+                        return data.theme;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        return 'light'; // Default to light theme if there's an error
+                    });
+            };
+
+            // Function to apply the saved theme
+            const applySavedTheme = () => {
+                getThemeFromSession().then(savedTheme => {
+                    const html = document.querySelector('html');
+                    const themeSwitch = document.querySelector('#theme-switch');
+
+                    html.setAttribute('data-theme', savedTheme);
+
+                    themeSwitch.checked = savedTheme === 'dark';
+                    /*
+                    if (savedTheme === 'dark') {
+                        themeSwitch.checked = true; // Check the switch
+                    } else {
+                        themeSwitch.checked = false; // Uncheck the switch
+                    }
+                    */
+                });
+            };
+
+            // Get the theme switch checkbox
+            const themeSwitch = document.querySelector('#theme-switch');
+
+            // Add a change event listener to the theme switch
+            themeSwitch.addEventListener('change', () => {
+                const html = document.querySelector('html');
+
+                if (themeSwitch.checked) {
+                    // If the switch is checked (dark mode)
+                    html.setAttribute('data-theme', 'dark');
+                    setThemeInSession('dark'); // Save the theme in session
+                } else {
+                    // If the switch is not checked (light mode)
+                    html.setAttribute('data-theme', 'light');
+                    setThemeInSession('light'); // Save the theme in session
+                }
+            });
+
+            // Apply the saved theme when the page loads
+            window.addEventListener('load', () => {
+                applySavedTheme();
+            });
+        </script>
+
+
     </body>
 </html>

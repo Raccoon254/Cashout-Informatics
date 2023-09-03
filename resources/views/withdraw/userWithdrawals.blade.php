@@ -40,7 +40,9 @@
                         <tr>
                             <td>{{ $withdrawal->user->name }}</td>
                             <td>${{ number_format($withdrawal->amount, 2) }}</td>
-                            <td>{{ $withdrawal->status }}</td>
+                            <td class="{{ $withdrawal->status === 'paid' ? 'bg-red-400' : ($withdrawal->status === 'pending' ? 'bg-white' : 'bg-green-400') }}">
+                                {{ $withdrawal->status }}
+                            </td>
                             <td>{{ $withdrawal->contact }}</td>
                             <td>{{ $withdrawal->created_at->diffForHumans() }}</td>
                             <td data-tip="View Withdrawal {{ $withdrawal->id }}" class="tooltip tooltip-warning">

@@ -8,8 +8,8 @@
             <div class="w-full">
 
                 <div class="w-full mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
+                    <div class="overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-3 sm:p-5">
 
                             @if(session('success'))
                                 <div class="alert rounded mb-4 alert-success">
@@ -29,7 +29,7 @@
                             <div class="mb-4">
 
                                 <section>
-                                    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">
+                                    <h1 class="text-2xl font-semibold leading-tight">
                                         {{ __('Welcome') }} {{ Auth::user()->name }}
                                     </h1>
                                 </section>

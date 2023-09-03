@@ -13,8 +13,8 @@
             <div class="w-full">
                 <div class="w-full sm:px-6 lg:px-8">
 
-                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm container sm:rounded-lg">
-                        <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
+                    <div class="overflow-hidden shadow-sm container sm:rounded-lg">
+                        <div class="p-3 sm:p-5">
 
                             <!-- Display greeting according to time of day -->
                             <div class="mb-4">

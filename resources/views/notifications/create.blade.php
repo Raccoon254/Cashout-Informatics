@@ -2,6 +2,7 @@
     <div class="container mx-auto p-6">
         <h1 class="text-3xl mb-6">Create Notification</h1>
 
+        @include('session.alerts')
         <form action="{{ route('notifications.store') }}" method="POST">
             @csrf
             <div class="mb-4">

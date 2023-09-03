@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/t', [NotificationController::class, 'test'])->name('test-n')->middleware('auth');
@@ -16,3 +17,6 @@ Route::get('/notifications/{notification}', [NotificationController::class, 'sho
 Route::get('/errors', function () {
     return view('errors.index');
 })->name('errors');
+
+Route::post('/set-theme', [ThemeController::class, 'setTheme'])->name('set-theme');
+Route::get('/get-theme', [ThemeController::class, 'getTheme'])->name('get-theme');

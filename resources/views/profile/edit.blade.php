@@ -12,8 +12,10 @@
         <div>
             <div class="w-full">
                 <div class="w-full mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
+
+                    @include('session.alerts')
+                    <div class="overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-3 sm:p-5 ">
 
 
                             <div class="mb-4 w-full flex sm:flex-nowrap gap-4 flex-wrap">
@@ -42,7 +44,7 @@
                                         @csrf
                                         <div class="card-body m-[-10px]">
                                             <h2 class="card-title">Activate</h2>
-                                            <p>You can activate your account</p>
+                                            <p>You can activate another user's Account.</p>
                                             <input class="input ring ring-orange-700 input-warning mb-4" name="email" type="email" placeholder="Email">
                                             <div class="card-actions justify-end">
                                                 <button data-tip="Deposit to your account" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
@@ -75,7 +77,7 @@
                             </div>
 
                             <!-- Referral Code -->
-                            <div class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+                            <div class="p-4 sm:p-8 shadow sm:rounded-lg">
                                 <div class="max-w-xl">
                                     <h3 class="text-lg font-semibold">{{ __('Referral Code') }}</h3>
                                     <p>{{ Auth::user()->referral_code }}</p>
@@ -83,26 +85,26 @@
                             </div>
 
                             <!-- Referral Link -->
-                            <div class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+                            <div class="p-4 sm:p-8 shadow sm:rounded-lg">
                                 <div class="max-w-xl">
                                     <h3 class="text-lg font-semibold">{{ __('Referral Link') }}</h3>
                                     <p>{{ route('register', ['ref' => Auth::user()->referral_code]) }}</p>
                                 </div>
                             </div>
 
-                            <div class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+                            <div class="p-4 sm:p-8 shadow sm:rounded-lg">
                                 <div class="max-w-xl">
                                     @include('profile.partials.update-profile-information-form')
                                 </div>
                             </div>
 
-                            <div class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+                            <div class="p-4 sm:p-8 shadow sm:rounded-lg">
                                 <div class="max-w-xl">
                                     @include('profile.partials.update-password-form')
                                 </div>
                             </div>
 
-                            <div class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+                            <div class="p-4 sm:p-8 shadow sm:rounded-lg">
                                 <div class="max-w-xl">
                                     @include('profile.partials.delete-user-form')
                                 </div>
@@ -113,7 +115,6 @@
                     </div>
                 </div>
             </div>
-        </div>
 
     </section>
 </x-app-layout>
