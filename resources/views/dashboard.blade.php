@@ -1,11 +1,9 @@
 <x-app-layout>
-{{--
-<x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 h-4 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-    --}}
+{{--    <x-slot name="header">--}}
+{{--        <h2 class="font-semibold text-xl text-gray-800 h-4 dark:text-gray-200 leading-tight">--}}
+{{--            {{ __('Dashboard') }}--}}
+{{--        </h2>--}}
+{{--    </x-slot>--}}
 
     <section class="flex w-full">
         <div class="h-full z-30 sticky">
@@ -90,7 +88,7 @@
                                     @foreach(Auth::user()->sent_transactions as $transaction)
                                         <tr>
                                             <td>{{ $transaction->id }}</td>
-                                            <td>{{ $transaction->amount }}</td>
+                                            <td class="bg-red-500">-{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
                                             <td><i class="fa-solid fa-caret-up"></i> &nbsp; {{ $transaction->recipient->name ?? "CASHOUT" }}</td> <!-- Accessing recipient's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
@@ -101,9 +99,9 @@
                                     @foreach(Auth::user()->received_transactions as $transaction)
                                         <tr>
                                             <td>{{ $transaction->id }}</td>
-                                            <td>{{ $transaction->amount }}</td>
+                                            <td class="bg-warning">+{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
-                                            <td><i class="fa-solid fa-caret-down"></i> &nbsp;{{ $transaction->sender->name }}</td> <!-- Accessing sender's name -->
+                                            <td><i class="fa-solid fa-caret-down"></i> &nbsp;{{ $transaction->sender->name?? 'CASHOUT™️' }}</td> <!-- Accessing sender's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
                                         </tr>
                                     @endforeach

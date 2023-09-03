@@ -18,6 +18,11 @@
                 Account
             </a>
 
+            <a class="sidebar-item" href="{{ route('user.withdrawals') }}">
+                <i class="fa-solid fa-coins"></i>
+                Withdrawals
+            </a>
+
             <a class="sidebar-item">
                 <i class="fa-solid fa-crosshairs"></i>
                 Spin & Win

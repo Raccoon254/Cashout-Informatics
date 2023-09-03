@@ -7,6 +7,7 @@ use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WithdrawController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,7 +31,7 @@ Route::get('/welcome', function () {
 
 // Inside web.php
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -43,6 +44,7 @@ Route::post('/mpesa/result', [MpesaController::class, 'handleResult'])
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 Route::middleware(['auth','verified'])->group(function () {
+
     Route::resource('users', UserController::class)->only([
         'index', 'edit', 'update', 'destroy'
     ]);
@@ -62,8 +64,10 @@ Route::middleware(['auth','verified'])->group(function () {
     //withdraw
     Route::post('/withdraw', [TransactionController::class, 'withdraw'])->name('withdraw');
 
-    //test
-    Route::get('/test', [TransactionController::class, 'test'])->name('test');
+    Route::resource('withdrawals', WithdrawController::class);
+    Route::get('/user-withdrawals', [WithdrawController::class, 'userWithdrawals'])->name('user.withdrawals');
+
+    Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
 });
 
 require __DIR__.'/auth.php';

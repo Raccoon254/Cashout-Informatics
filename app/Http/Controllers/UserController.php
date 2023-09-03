@@ -15,10 +15,10 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      *
-     * @return Application|Factory|\Illuminate\Foundation\Application|View
+     * @return View
      * @throws AuthorizationException
      */
-    public function index(): View|\Illuminate\Foundation\Application|Factory|Application
+    public function index(): View
     {
         $this->authorize('viewAny', User::class);
 
@@ -31,10 +31,10 @@ class UserController extends Controller
      * Show the form for editing the specified user.
      *
      * @param User $user
-     * @return Application|Factory|View|\Illuminate\Foundation\Application
+     * @return View
      * @throws AuthorizationException
      */
-    public function edit(User $user): \Illuminate\Foundation\Application|View|Factory|Application
+    public function edit(User $user): View
     {
         $this->authorize('update', $user);
 

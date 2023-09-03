@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Earning;
 use App\Models\Mpesa;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Withdrawal;
 use App\Notifications\AccountActivated;
+use App\Notifications\EarningSavedNotification;
 use App\Notifications\ReferralBonusNotification;
+use App\Notifications\WithdrawalRequested;
+use App\Notifications\WithdrawalRequestedAdmin;
 use http\Env;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,9 +57,8 @@ class TransactionController extends Controller
             return back()->with('error', 'You cannot send more than KSh. 10,000');
         }
 
-        //add transaction fee of 5%
-
-        $transaction_fee = $request->amount * 0.05;
+        //add transaction fee of 0.15%
+        $transaction_fee = $request->amount * 0.055;
         $transaction_fee = round($transaction_fee, 2);
 
         //add transaction fee to the transaction
@@ -82,6 +86,24 @@ class TransactionController extends Controller
 
         $recipient->balance += $request->amount;
         $recipient->save();
+
+        //get id for tomsteve@gmail.com
+        $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+
+        //Record the transaction to the Earnings table
+        $earning = Earning::create([
+            'user_id' => $steve_id,
+            'from' => $sender->id,
+            'amount' => $transaction_fee,
+            'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + 100,
+            'description' => 'Earnings from transaction fee',
+            'type' => 'transaction_fee',
+        ]);
+
+        $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+        if ($tomSteveUser) {
+            $tomSteveUser->notify(new EarningSavedNotification());
+        }
 
         return back()->with('success', 'Money sent successfully to ' . $recipient->name);
     }
@@ -265,7 +287,6 @@ class TransactionController extends Controller
                 'date' => Carbon::now(),
             ]);
 
-
             //notify the referrer
             $referrer->notify(new ReferralBonusNotification($referrer, $user));
 
@@ -280,6 +301,24 @@ class TransactionController extends Controller
                 'date' => Carbon::now(),
             ]);
 
+            //get id for tomsteve@gmail.com
+            $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+
+            //Record the transaction to the Earnings table
+            $earning = Earning::create([
+                'user_id' => $steve_id,
+                'from' => $user->id,
+                'amount' => 0.3 * $activationAmount,
+                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + (0.3 * $activationAmount),
+                'description' => 'Earnings from '.$user->name.' activation',
+                'type' => 'Activation_with_referral',
+            ]);
+
+            $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+            if ($tomSteveUser) {
+                $tomSteveUser->notify(new EarningSavedNotification());
+            }
+
 
         }else{
 
@@ -292,6 +331,24 @@ class TransactionController extends Controller
                 'amount' => 100,
                 'date' => Carbon::now(),
             ]);
+
+            //get id for tomsteve@gmail.com
+            $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+
+            //Record the transaction to the Earnings table
+            $earning = Earning::create([
+                'user_id' => $steve_id,
+                'from' => $user->id,
+                'amount' => 100,
+                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + 100,
+                'description' => 'Earnings from '.$user->name.' activation',
+                'type' => 'Activation_no_referral',
+            ]);
+
+            $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+            if ($tomSteveUser) {
+                $tomSteveUser->notify(new EarningSavedNotification());
+            }
         }
 
         //message to the user and admin here
@@ -327,19 +384,57 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
-         //Check if the amount is greater than or equal to 100
+        // Check if the amount is greater than or equal to 100
         if ($amount < 100) {
             return back()->with('error', 'You cannot withdraw less than KSh. 100');
         }
 
-        // Get the phone number
-        $phone = $user->contact;
+        // Calculate the fee as 2% of the amount
+        $fee = 0.055 * $amount;
 
-        // create the withdrawal request and send notifications to both user and admins
+        // Deduct the withdrawal amount and fee from the user's balance
+        $user->balance -= ($amount + $fee);
 
+        //get id for tomsteve@gmail.com
+        $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
 
+        //Record the transaction to the Earnings table
+        $earning = Earning::create([
+            'user_id' => $steve_id,
+            'from' => $user->id,
+            'amount' => $fee,
+            'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + $fee,
+            'description' => 'Earnings from withdrawal transaction',
+            'type' => 'Transaction_fee',
+        ]);
 
+        $user->save();
+
+        // Create the withdrawal request
+        $withdrawal = new Withdrawal([
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'status' => 'pending',
+            'contact' => $user->contact,
+            'fee' => $fee,
+        ]);
+
+        $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+        if ($tomSteveUser) {
+            $tomSteveUser->notify(new EarningSavedNotification());
+        }
+
+        $withdrawal->save();
+
+        // Send notification to the user
+        $user->notify(new WithdrawalRequested($withdrawal));
+        //notify the admin
+        $admins = User::where('type', 'admin')->get();
+        Notification::send($admins, new WithdrawalRequestedAdmin($withdrawal, $user));
+
+        return back()->with('success', 'Withdrawal request submitted successfully');
     }
+
 
 
 }
