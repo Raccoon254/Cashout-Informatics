@@ -51,9 +51,9 @@
                                                 <input class="input ring ring-orange-700 input-warning mb-4" name="email" type="email" placeholder="Recipient's Email">
                                                 <input class="input ring ring-blue-700 input-warning mb-4" name="amount" type="number" placeholder="Amount">
                                                 <div class="card-actions gap-3 justify-end">
-                                                    <button type="submit" data-tip="send money" class="btn hover:bg-base-100 tooltip ring ring-orange-700 btn-circle">
-                                                        <i class="fa-solid fa-share-nodes"></i>
-                                                    </button>
+                                                    <x-primary-button type="submit" data-tip="send money" class="hover:bg-base-100 tooltip ring ring-orange-700">
+                                                        <i class="fa-solid fa-share-nodes"></i> Send
+                                                    </x-primary-button>
                                                 </div>
                                             </div>
                                         </form>
@@ -68,9 +68,9 @@
                                                 <p>You can deposit cash here using your M-Pesa Contact</p>
                                                 <input class="input ring ring-orange-700 input-success mb-4" name="deposit" type="number" placeholder="Amount">
                                                 <div class="card-actions justify-end">
-                                                    <button data-tip="Deposit to your account" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
-                                                        <i class="fa-solid fa-sack-dollar"></i>
-                                                    </button>
+                                                    <x-primary-button data-tip="Deposit to account" class="tooltip ring tooltip-bottom tooltip-warning ring-blue-700" type="submit">
+                                                        <i class="fa-solid fa-sack-dollar"></i> Deposit
+                                                    </x-primary-button>
                                                 </div>
                                             </div>
                                         </div>
@@ -91,9 +91,9 @@
 
                                                 <input class="input ring ring-orange-700 input-success mb-4" name="amount" type="number" placeholder="Amount">
                                                 <div class="card-actions justify-end">
-                                                    <button data-tip="Withdraw" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
-                                                        <i class="fa-solid fa-circle-dollar-to-slot"></i>
-                                                    </button>
+                                                    <x-primary-button data-tip="Withdraw" class="tooltip ring tooltip-bottom tooltip-accent ring-blue-700" type="submit">
+                                                        <i class="fa-solid fa-circle-dollar-to-slot"></i> Withdraw
+                                                    </x-primary-button>
                                                 </div>
 
                                             </div>
