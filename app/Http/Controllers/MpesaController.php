@@ -63,8 +63,8 @@ class MpesaController extends Controller
                         $transaction = Transaction::create([
                             'user_id' => $user->id,
                             'transaction_type' => 'DEPOSIT',
-                            'from' => $user->id,
-                            'to' => 'account',
+                            'from' => 'MPESA',
+                            'to' => $user->id,
                             'amount' => $mpesaTransaction->amount,
                             'date' => Carbon::now(),
                         ]);
