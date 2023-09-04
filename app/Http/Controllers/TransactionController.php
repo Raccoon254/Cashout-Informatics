@@ -115,7 +115,7 @@ class TransactionController extends Controller
     public function mpesaDeposit(Request $request): RedirectResponse
     {
         $request->validate([
-            'deposit' => 'required|numeric|min:0.01',
+            'deposit' => 'required|numeric|min:5',
         ]);
 
         $user = Auth::user();

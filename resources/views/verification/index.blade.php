@@ -64,31 +64,17 @@
 
 
         </div>
-
-        <div>
             <div class="w-full">
 
                 <div class="w-full mx-auto sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-3 sm:p-5">
 
-                            @if(session('success'))
-                                <div class="alert rounded mb-4 alert-success">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-
-                            @if(session('error'))
-                                <div class="alert rounded mb-4 alert-error">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                    {{ session('error') }}
-                                </div>
-                            @endif
+                            @include('session.alerts')
 
                             <!-- Display greeting according to time of day -->
-                            <div class="mb-4">
-                                <section>
+                            <div class="my-4">
+                                <section class="px-6">
                                     <h1 class="text-2xl font-semibold leading-tight">
                                         {{ __('Welcome') }} {{ Auth::user()->name }}
                                     </h1>
@@ -134,14 +120,17 @@
 
                                     </div>
 
+                                    @php
+                                        $activaton_fee = Env('ACTIVATION_FEE');
+                                    @endphp
 
-                                    @if(Auth::user()->balance >= 100)
+                                    @if(Auth::user()->balance >= $activaton_fee)
 
                                         <form class="card w-full sm:w-1/2 rounded bg-base-100 shadow-sm" action="{{ route('activate') }}" method="POST">
                                             @csrf
                                                 <div class="card-body m-[-10px]">
                                                     <h2 class="card-title">Activate</h2>
-                                                    <p>You can activate your account</p>
+                                                    <p>You can activate your account. Enter your email and press ACTIVATE</p>
                                                     <input class="input ring ring-orange-700 input-warning mb-4" name="email" type="email" placeholder="Email">
                                                     <div class="card-actions justify-end">
                                                         <x-primary-button data-tip="Activate Account" class="btn tooltip ring tooltip-warning ring-blue-700" type="submit">
@@ -185,5 +174,10 @@
                 </div>
             </div>
         </div>
+
+        <section class="h-full z-30 sticky">
+            @include('layouts.stabilizer-sidebar')
+        </section>
+
     </section>
 </section>

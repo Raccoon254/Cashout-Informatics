@@ -5,10 +5,13 @@
             <i class="fa-solid fa-circle-info"></i>
         </div>
     </section>
-    @if(Auth::user()->balance < 100)
+    @php
+        $activaton_fee = Env('ACTIVATION_FEE');
+    @endphp
+    @if(Auth::user()->balance < $activaton_fee)
         <section class="flex flex-col gap-4">
             <p>
-                You have to deposit at least Ksh. 100 to activate your account and start earning and be able to the following Cashout Tasks
+                You have to deposit at least KSH {{ $activaton_fee }} to activate your account and start earning and be able to the following Cashout Tasks
             </p>
             <ul class="list-disc list-inside flex flex-col gap-2 rounded-box">
                 <li>Share Cash</li>
