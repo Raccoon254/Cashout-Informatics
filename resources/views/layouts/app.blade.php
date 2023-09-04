@@ -78,7 +78,7 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
 
             @else
 
-                <main>
+                <main class="w-full">
                     @include('verification.index')
                 </main>
 

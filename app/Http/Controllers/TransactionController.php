@@ -353,13 +353,16 @@ class TransactionController extends Controller
 
         //message to the user and admin here
         $user->notify(new AccountActivated($user));
-
-        // Send notification to all admin users
-        $admins = User::where('type', 'admin')->get();
-        Notification::send($admins, new AccountActivated($user));
-
         $user->status = "active";
         $user->save();
+        // Send notification to all admin users
+        $admins = User::where('type', 'admin')->get();
+        //if there are admins
+        if ($admins) {
+            foreach ($admins as $admin) {
+                $admin->notify(new AccountActivated($user));
+            }
+        }
 
         //return back with username and message of success
         return back()->with('success', 'Account activated for '.$user->name.' successfully');
@@ -367,7 +370,8 @@ class TransactionController extends Controller
     }
 
     //withdraw money
-    public function withdraw(Request $request) {
+    public function withdraw(Request $request): \Illuminate\Http\RedirectResponse
+    {
         // Validate the request
         $request->validate([
             'amount' => 'required|numeric',
@@ -384,9 +388,9 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
-        // Check if the amount is greater than or equal to 100
-        if ($amount < 100) {
-            return back()->with('error', 'You cannot withdraw less than KSh. 100');
+        // Check if the amount is greater than or equal to 700
+        if ($amount < 500) {
+            return back()->with('error', 'You cannot withdraw less than KSh. 700');
         }
 
         // Calculate the fee as 2% of the amount

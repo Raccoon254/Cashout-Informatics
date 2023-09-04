@@ -28,7 +28,7 @@
                             <!-- Display greeting according to time of day -->
                             <div class="mb-4">
 
-                                <section>
+                                <section class="px-6">
                                     <h1 class="text-2xl font-semibold leading-tight">
                                         {{ __('Welcome') }} {{ Auth::user()->name }}
                                     </h1>
@@ -36,24 +36,6 @@
 
                                 <!-- Display User Balance -->
                                 <div class="mb-4">
-                                </div>
-
-                                <div class="mb-4 w-full flex flex-wrap gap-4">
-
-                                    <div class="card w-full p-0 rounded bg-base-100 shadow-sm">
-                                        <div class="card-body m-[-10px]">
-                                            <h2 class="card-title">Balance</h2>
-                                            <p>Total Balance from all Cashout Tasks is <span class="font-sans font-bold text-orange-700 text-2xl">{{ Auth::user()->balance }}</span> KSH</p>
-                                            <div class="card-actions gap-3 justify-end">
-                                                <button class="btn ring ring-blue-700 btn-circle hover:bg-base-100">
-                                                    <i class="fa-solid fa-building-columns"></i>
-                                                </button>
-                                                <button class="btn hover:bg-base-100 ring ring-orange-700 btn-circle">
-                                                    <i class="fa-solid fa-coins"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <!-- Cards -->

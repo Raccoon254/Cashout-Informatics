@@ -4,6 +4,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Earning;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -26,6 +29,18 @@ class DashboardController extends Controller
 
     public function admin(): View
     {
-        return view('admin.index');
+        // Fetch data for Earnings
+        $earnings = Earning::select('created_at', 'total_amount')->get();
+
+        // Fetch data for User Counts
+        $userCounts = User::select('type', \DB::raw('count(*) as count'))->groupBy('type')->get();
+
+        // Fetch data for Transactions
+        $transactions = Transaction::select('date', \DB::raw('sum(amount) as total_amount'))
+            ->groupBy('date')
+            ->get();
+
+        return view('admin.index', compact('earnings', 'userCounts', 'transactions'));
     }
+
 }

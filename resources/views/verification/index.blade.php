@@ -69,8 +69,8 @@
             <div class="w-full">
 
                 <div class="w-full mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-3 sm:p-5 text-gray-900 dark:text-gray-100">
+                    <div class="overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-3 sm:p-5">
 
                             @if(session('success'))
                                 <div class="alert rounded mb-4 alert-success">
@@ -89,7 +89,7 @@
                             <!-- Display greeting according to time of day -->
                             <div class="mb-4">
                                 <section>
-                                    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">
+                                    <h1 class="text-2xl font-semibold leading-tight">
                                         {{ __('Welcome') }} {{ Auth::user()->name }}
                                     </h1>
                                 </section>
@@ -144,9 +144,9 @@
                                                     <p>You can activate your account</p>
                                                     <input class="input ring ring-orange-700 input-warning mb-4" name="email" type="email" placeholder="Email">
                                                     <div class="card-actions justify-end">
-                                                        <button data-tip="Activate Account" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
-                                                            <i class="fa-solid fa-bolt-lightning"></i>
-                                                        </button>
+                                                        <x-primary-button data-tip="Activate Account" class="btn tooltip ring tooltip-warning ring-blue-700" type="submit">
+                                                            <i class="fa-solid fa-bolt-lightning"></i> Activate
+                                                        </x-primary-button>
                                                     </div>
                                                 </div>
                                         </form>
@@ -160,9 +160,9 @@
                                                     <p>You can deposit cash here using your M-Pesa Contact</p>
                                                     <input class="input ring ring-orange-700 input-success mb-4" name="deposit" type="number" placeholder="Amount">
                                                     <div class="card-actions justify-end">
-                                                        <button data-tip="Deposit to your account" class="btn tooltip ring tooltip-left ring-blue-700 btn-circle" type="submit">
-                                                            <i class="fa-solid fa-sack-dollar"></i>
-                                                        </button>
+                                                        <x-primary-button data-tip="Deposit to account" class="btn tooltip ring tooltip-bottom tooltip-warning ring-blue-700" type="submit">
+                                                            <i class="fa-solid fa-sack-dollar"></i> Deposit
+                                                        </x-primary-button>
                                                     </div>
                                                 </div>
                                         </form>
@@ -179,7 +179,7 @@
 
                     </div>
 
-                        <section class="footer p-3 sm:p-5 text-gray-900 dark:text-gray-100">
+                        <section class="footer p-3 sm:p-5">
                             @include('verification.info')
                         </section>
                 </div>

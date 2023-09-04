@@ -47,9 +47,38 @@
                         </div>
                     </div>
                 </div>
+
+                    <!-- Earnings Chart -->
+                    <div class="card w-full sm:w-5/12 p-0 rounded border-gray-200 border-2 bg-base-100 shadow-md " id="earnings-chart">
+                        <center>
+                            Earnings with time
+                        </center>
+                    </div>
+
+                    <!-- User Counts Chart -->
+                    <div class="card w-full sm:w-5/12 p-0 rounded border-gray-200 border-2 bg-base-100 shadow-md " id="user-counts-chart">
+                        <center>
+                            User counts per type
+                        </center>
+                    </div>
+
+                    <!-- Transactions Chart -->
+                    <div class="card w-full sm:w-5/12 p-0 rounded border-gray-200 border-2 bg-base-100 shadow-md " id="transactions-chart">
+                        <center>
+                            Transaction amounts with time
+                        </center>
+                    </div>
             </div>
+
+
+
         </section>
     </div>
+
+    <!-- Include ApexCharts CDN Links -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.29.0/dist/apexcharts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.29.0/dist/apexcharts.min.js"></script>
+
 
     <script>
         var startTime = new Date('{{ Auth::user()->last_login }}');
@@ -75,5 +104,70 @@
         }
 
         setInterval(updateTime, 1000); // update every second
+
+
+        // Data
+        var earningsData = @json($earnings);
+        var userCountsData = @json($userCounts);
+        var transactionsData = @json($transactions);
+
+        // Earnings Chart
+        var earningsOptions = {
+            chart: {
+                type: 'line',
+                height: 350
+            },
+            series: [{
+                name: 'Earnings',
+                data: earningsData.map(item => item.total_amount)
+            }],
+            xaxis: {
+                categories: earningsData.map(item => shortenDate(item.created_at))
+            }
+        }
+
+        var earningsChart = new ApexCharts(document.querySelector("#earnings-chart"), earningsOptions);
+        earningsChart.render();
+
+        // User Counts Chart
+        var userCountsOptions = {
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            series: [{
+                name: 'User Counts',
+                data: userCountsData.map(item => item.count)
+            }],
+            xaxis: {
+                categories: userCountsData.map(item => item.type)
+            }
+        }
+
+        var userCountsChart = new ApexCharts(document.querySelector("#user-counts-chart"), userCountsOptions);
+        userCountsChart.render();
+
+        // Transactions Chart
+        var transactionsOptions = {
+            chart: {
+                type: 'area',
+                height: 350
+            },
+            series: [{
+                name: 'Total Amount',
+                data: transactionsData.map(item => item.total_amount)
+            }],
+            xaxis: {
+                categories: transactionsData.map(item => shortenDate(item.date))
+            }
+        }
+
+        function shortenDate(date) {
+            //return only the month and day and time hh:mm
+            return date.substring(5, 16);
+        }
+
+        var transactionsChart = new ApexCharts(document.querySelector("#transactions-chart"), transactionsOptions);
+        transactionsChart.render();
     </script>
 </x-app-layout>
