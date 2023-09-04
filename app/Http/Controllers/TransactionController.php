@@ -232,11 +232,11 @@ class TransactionController extends Controller
     }
 
     //activate account
+
     public function activate(Request $request): RedirectResponse
     {
-
         $email = $request->email;
-        $activaton_fee = ENV('ACTIVATION_FEE');
+        $activation_fee = ENV('ACTIVATION_FEE');
 
         if (!$email) {
             return back()->with('error', 'Please enter your email');
@@ -248,129 +248,283 @@ class TransactionController extends Controller
             return back()->with('error', 'User does not exist');
         }
 
-        //if the user is already active
-        if($user->status == "active") {
+        if ($user->status == "active") {
             return back()->with('error', 'Your account is already active');
         }
 
-        //deduct from the current auth user balance
         $sender = Auth::user();
 
-        // Check if user has enough balance
-        if($sender->balance < $activaton_fee) {
-            return back()->with('error', 'You do not have enough balance to activate this account, please deposit '.$activaton_fee.' to your account and try again.');
+        if ($sender->balance < $activation_fee) {
+            return back()->with('error', 'You do not have enough balance to activate this account, please deposit ' . $activation_fee . ' to your account and try again.');
         }
 
-        // Update sender balances
-        $sender->balance -= $activaton_fee;
-        $sender->save();
+        $this->activateUser($user, $sender, $activation_fee);
 
+        return back()->with('success', 'Account activated for ' . $user->name . ' successfully');
+    }
 
+    private function activateUser(User $user, User $sender, float $activation_fee)
+    {
+        // Initialize referral and cashout amounts
+        $referralAmount = 0;
+        $cashoutAmount = 0;
 
         // Check if the user has a referrer
-        if (!$user->referred_by==null) {
+        if ($user->referred_by !== null) {
             $referrer_code = $user->referred_by;
-
             $referrer = User::where('referral_code', $referrer_code)->first();
 
-            $activationAmount = $activaton_fee;
-            $referralAmount = 0.7 * $activationAmount;
+            $referralAmount = 0.6 * $activation_fee; // 60% goes to the direct referrer
+            $cashoutAmount = 0.4 * $activation_fee; // 40% goes to Cashout
 
-            // Update the referrer's balance
-            $referrer->balance += $referralAmount;
-            $referrer->save();
-
-            // Create a transaction for the referral bonus
-            Transaction::create([
-                'user_id' => $referrer->id,
-                'transaction_type' => 'REFERRAL_BONUS',
-                'from' => $user->id,
-                'to' => $referrer->id,
-                'amount' => $referralAmount,
-                'date' => Carbon::now(),
-            ]);
-
-            //notify the referrer
-            $referrer->notify(new ReferralBonusNotification($referrer, $user));
-
-            //create a transaction from user to cashout kenya
-
-            Transaction::create([
-                'user_id' => $sender->id,
-                'transaction_type' => 'ACTIVATION',
-                'from' => $sender->id,
-                'to' => 'cashout kenya',
-                'amount' => 0.3 * $activationAmount,
-                'date' => Carbon::now(),
-            ]);
-
-            //get id for tomsteve@gmail.com
-            $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
-
-            //Record the transaction to the Earnings table
-            $earning = Earning::create([
-                'user_id' => $steve_id,
-                'from' => $user->id,
-                'amount' => 0.3 * $activationAmount,
-                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + (0.3 * $activationAmount),
-                'description' => 'Earnings from '.$user->name.' activation',
-                'type' => 'Activation_with_referral',
-            ]);
-
-            $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
-            if ($tomSteveUser) {
-                $tomSteveUser->notify(new EarningSavedNotification());
+            // Check if the referrer also has a referrer (second level)
+            if ($referrer->referred_by !== null) {
+                $secondLevelReferrerCode = $referrer->referred_by;
+                $secondLevelReferrer = User::where('referral_code', $secondLevelReferrerCode)->first();
+                $cashoutAmount -= 0.2 * $activation_fee; // Reduce the cashout amount
+                $secondLevelReferralAmount = 0.2 * $activation_fee; // 20% goes to the second level referrer
+                $referralAmount -= $secondLevelReferralAmount; // Reduce the direct referrer's amount
             }
-
-
-        }else{
-
-            //create a transaction from user to cashout kenya
-            Transaction::create([
-                'user_id' => $sender->id,
-                'transaction_type' => 'ACTIVATION',
-                'from' => $sender->id,
-                'to' => 'cashout kenya',
-                'amount' => $activaton_fee,
-                'date' => Carbon::now(),
-            ]);
-
-            //get id for tomsteve@gmail.com
-            $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
-
-            //Record the transaction to the Earnings table
-            $earning = Earning::create([
-                'user_id' => $steve_id,
-                'from' => $user->id,
-                'amount' => $activaton_fee,
-                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + $activaton_fee,
-                'description' => 'Earnings from '.$user->name.' activation',
-                'type' => 'Activation_no_referral',
-            ]);
-
-            $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
-            if ($tomSteveUser) {
-                $tomSteveUser->notify(new EarningSavedNotification());
-            }
+        } else {
+            // If there are no referrals, all goes to Cashout
+            $cashoutAmount = $activation_fee;
         }
 
-        //message to the user and admin here
-        $user->notify(new AccountActivated($user));
+        // Update the sender's balance
+        $this->updateSenderBalance($sender, $activation_fee);
+
+        // Create transactions for Cashout
+        $this->createSenderTransaction($sender, $cashoutAmount);
+
+        // Update referralAmount for direct referrer
+        if ($referralAmount > 0) {
+            $this->updateReferrerBalance($referrer, $referralAmount);
+            $this->createReferralTransaction($referrer, $user, $referralAmount);
+        }
+
+        // Update referralAmount for second level referrer
+        if (isset($secondLevelReferrer) && $secondLevelReferralAmount > 0) {
+            $this->updateReferrerBalance($secondLevelReferrer, $secondLevelReferralAmount);
+            $this->createReferralTransaction($secondLevelReferrer, $user, $secondLevelReferralAmount);
+        }
+
+        // Record earnings and notify admins
+        $this->recordEarnings($user, $cashoutAmount);
+        $this->notifyAdmins($user);
+
+        // Mark the user as active
         $user->status = "active";
         $user->save();
-        // Send notification to all admin users
+    }
+
+
+    private function updateReferrerBalance(User $referrer, float $amount): void
+    {
+        $referrer->balance += $amount;
+        $referrer->save();
+    }
+
+    private function createReferralTransaction(User $referrer, User $user, float $amount): void
+    {
+        Transaction::create([
+            'user_id' => $referrer->id,
+            'transaction_type' => 'REFERRAL_BONUS',
+            'from' => $user->id,
+            'to' => $referrer->id,
+            'amount' => $amount,
+            'date' => Carbon::now(),
+        ]);
+    }
+
+    private function updateSenderBalance(User $sender, float $amount): void
+    {
+        $sender->balance -= $amount;
+        $sender->save();
+    }
+
+    private function createSenderTransaction(User $sender, float $amount): void
+    {
+        Transaction::create([
+            'user_id' => $sender->id,
+            'transaction_type' => 'ACTIVATION',
+            'from' => $sender->id,
+            'to' => 'cashout kenya',
+            'amount' => $amount,
+            'date' => Carbon::now(),
+        ]);
+    }
+
+    private function recordEarnings(User $user, float $amount): void
+    {
+        $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+        $earningType = $user->referred_by !== null ? 'Activation_with_referral' : 'Activation_no_referral';
+
+        Earning::create([
+            'user_id' => $steve_id,
+            'from' => $user->id,
+            'amount' => $amount,
+            'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + $amount,
+            'description' => 'Earnings from ' . $user->name . ' activation',
+            'type' => $earningType,
+        ]);
+
+        $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+        if ($tomSteveUser) {
+            $tomSteveUser->notify(new EarningSavedNotification());
+        }
+    }
+
+    private function notifyAdmins(User $user): void
+    {
         $admins = User::where('type', 'admin')->get();
-        //if there are admins
-        if ($admins) {
+
+        if ($admins->isNotEmpty()) {
             foreach ($admins as $admin) {
                 $admin->notify(new AccountActivatedAdmin($user));
             }
         }
-
-        //return back with username and message of success
-        return back()->with('success', 'Account activated for '.$user->name.' successfully');
-
     }
+
+    /* public function activate(Request $request): RedirectResponse
+     {
+
+         $email = $request->email;
+         $activaton_fee = ENV('ACTIVATION_FEE');
+
+         if (!$email) {
+             return back()->with('error', 'Please enter your email');
+         }
+
+         $user = User::where('email', $email)->first();
+
+         if (!$user) {
+             return back()->with('error', 'User does not exist');
+         }
+
+         //if the user is already active
+         if($user->status == "active") {
+             return back()->with('error', 'Your account is already active');
+         }
+
+         //deduct from the current auth user balance
+         $sender = Auth::user();
+
+         // Check if user has enough balance
+         if($sender->balance < $activaton_fee) {
+             return back()->with('error', 'You do not have enough balance to activate this account, please deposit '.$activaton_fee.' to your account and try again.');
+         }
+
+         // Update sender balances
+         $sender->balance -= $activaton_fee;
+         $sender->save();
+
+
+
+         // Check if the user has a referrer
+         if (!$user->referred_by==null) {
+             $referrer_code = $user->referred_by;
+
+             $referrer = User::where('referral_code', $referrer_code)->first();
+
+             $activationAmount = $activaton_fee;
+             $referralAmount = 0.7 * $activationAmount;
+
+             // Update the referrer's balance
+             $referrer->balance += $referralAmount;
+             $referrer->save();
+
+             // Create a transaction for the referral bonus
+             Transaction::create([
+                 'user_id' => $referrer->id,
+                 'transaction_type' => 'REFERRAL_BONUS',
+                 'from' => $user->id,
+                 'to' => $referrer->id,
+                 'amount' => $referralAmount,
+                 'date' => Carbon::now(),
+             ]);
+
+             //notify the referrer
+             $referrer->notify(new ReferralBonusNotification($referrer, $user));
+
+             //create a transaction from user to cashout kenya
+
+             Transaction::create([
+                 'user_id' => $sender->id,
+                 'transaction_type' => 'ACTIVATION',
+                 'from' => $sender->id,
+                 'to' => 'cashout kenya',
+                 'amount' => 0.3 * $activationAmount,
+                 'date' => Carbon::now(),
+             ]);
+
+             //get id for tomsteve@gmail.com
+             $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+
+             //Record the transaction to the Earnings table
+             $earning = Earning::create([
+                 'user_id' => $steve_id,
+                 'from' => $user->id,
+                 'amount' => 0.3 * $activationAmount,
+                 'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + (0.3 * $activationAmount),
+                 'description' => 'Earnings from '.$user->name.' activation',
+                 'type' => 'Activation_with_referral',
+             ]);
+
+             $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+             if ($tomSteveUser) {
+                 $tomSteveUser->notify(new EarningSavedNotification());
+             }
+
+
+         }else{
+
+             //create a transaction from user to cashout kenya
+             Transaction::create([
+                 'user_id' => $sender->id,
+                 'transaction_type' => 'ACTIVATION',
+                 'from' => $sender->id,
+                 'to' => 'cashout kenya',
+                 'amount' => $activaton_fee,
+                 'date' => Carbon::now(),
+             ]);
+
+             //get id for tomsteve@gmail.com
+             $steve_id = User::where('email', 'tomsteve187@gmail.com')->first()->id;
+
+             //Record the transaction to the Earnings table
+             $earning = Earning::create([
+                 'user_id' => $steve_id,
+                 'from' => $user->id,
+                 'amount' => $activaton_fee,
+                 'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + $activaton_fee,
+                 'description' => 'Earnings from '.$user->name.' activation',
+                 'type' => 'Activation_no_referral',
+             ]);
+
+             $tomSteveUser = User::where('email', 'tomsteve187@gmail.com')->first();
+             if ($tomSteveUser) {
+                 $tomSteveUser->notify(new EarningSavedNotification());
+             }
+         }
+
+         //message to the user and admin here
+         $user->notify(new AccountActivated($user));
+         $user->status = "active";
+         $user->save();
+         // Send notification to all admin users
+         $admins = User::where('type', 'admin')->get();
+         //if there are admins
+         if ($admins) {
+             foreach ($admins as $admin) {
+                 $admin->notify(new AccountActivatedAdmin($user));
+             }
+         }
+
+         //return back with username and message of success
+         return back()->with('success', 'Account activated for '.$user->name.' successfully');
+
+     }
+    */
 
     //withdraw money
     public function withdraw(Request $request): RedirectResponse

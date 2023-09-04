@@ -36,7 +36,7 @@ class EarningSavedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Earning Received')
-            ->line('You have received an earning from a withdrawal transaction.')
+            ->line('You have received an earning from a referral.')
             ->action('View Earnings', route('admin'))
             ->line('Thank you for using our service!');
     }
