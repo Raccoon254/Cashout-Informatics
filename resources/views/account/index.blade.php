@@ -86,6 +86,7 @@
                                         @csrf
                                         <div class="">
                                             <div class="card-body m-[-10px]">
+
                                                 <h2 class="card-title">Withdraw</h2>
                                                 <p>Withdraw Cash to M-Pesa</p>
 
