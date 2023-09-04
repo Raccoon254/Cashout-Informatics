@@ -73,7 +73,7 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
         </div>
         <div class="navbar-center">
             <a href="{{ route('dashboard') }}" >
-                <img src="{{ asset('images/Cash Type Blend.png') }}" alt="Cashout" class="w-28 sm:w-32 mix-blend-screen">
+                <img src="{{ asset('images/Cash Type Blend.png') }}" alt="Cashout" class="w-28 sm:w-32">
             </a>
         </div>
         <div class="navbar-end">
@@ -136,19 +136,19 @@ CAUTION: This is not a get rich quick scheme. You will have to work hard to make
     </div>
 
     <!-- Swiper JS -->
-    
+
     <!-- Google Analytics -->
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    
+
     ga('create', 'UA-XXXXX-Y', 'auto');
     ga('send', 'pageview');
 </script>
 <!-- End Google Analytics -->
-    
+
     <!-- Google Analytics -->
 <script>
     window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;

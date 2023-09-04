@@ -15,7 +15,7 @@
         <div class="navbar-center">
             {{--<p class="normal-case text-xl">Cashout</p>--}}
             <a href="{{ route('dashboard') }}" >
-                <img src="{{ asset('images/Cash Type Blend.png') }}" alt="Cashout" class="w-28 sm:w-32 mix-blend-screen">
+                <img src="{{ asset('images/Cash Type Blend.png') }}" alt="Cashout" class="w-28 sm:w-32">
             </a>
         </div>
         <div class="navbar-end items-center">

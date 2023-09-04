@@ -30,7 +30,7 @@
 
                                 <section class="px-6">
                                     <h1 class="text-2xl font-semibold leading-tight">
-                                        {{ __('Welcome') }} {{ Auth::user()->name }}
+                                        {{ __('Welcome') }} to your account, {{ Auth::user()->name }}
                                     </h1>
                                 </section>
 
