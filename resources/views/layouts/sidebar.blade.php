@@ -23,7 +23,7 @@
                 Withdrawals
             </a>
 
-            <a class="sidebar-item" href="{{ route('notifications.user') }}">
+            <a href="{{ route('notifications.user') }}" class="sidebar-item {{ Route::is('notifications.user') ? 'active' : '' }}">
                 <i class="fa-solid fa-bell"></i>
                 Notifications
             </a>
@@ -40,7 +40,7 @@
                 <i class="fa-solid fa-rectangle-ad"></i>
                 Advertise
             </a>
-            <a href="{{ route('about') }}" class="sidebar-item">
+            <a href="{{ route('about') }}" class="sidebar-item {{ Route::is('about') ? 'active' : '' }}">
                 <i class="fa-regular fa-circle-question"></i>
                 About
             </a>

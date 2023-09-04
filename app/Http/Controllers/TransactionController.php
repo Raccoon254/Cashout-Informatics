@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Withdrawal;
 use App\Notifications\AccountActivated;
+use App\Notifications\AccountActivatedAdmin;
 use App\Notifications\EarningSavedNotification;
 use App\Notifications\ReferralBonusNotification;
 use App\Notifications\WithdrawalRequested;
@@ -360,7 +361,7 @@ class TransactionController extends Controller
         //if there are admins
         if ($admins) {
             foreach ($admins as $admin) {
-                $admin->notify(new AccountActivated($user));
+                $admin->notify(new AccountActivatedAdmin($user));
             }
         }
 
