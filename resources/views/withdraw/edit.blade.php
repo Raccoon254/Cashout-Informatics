@@ -1,5 +1,6 @@
 <x-app-layout>
     <div class="flex">
+
         <section class="z-50">
             @include('admin.sidebar')
         </section>
@@ -11,8 +12,9 @@
 
                 <form class="w-full my-12 max-w-xs" method="POST" action="{{ route('withdrawals.update', $withdrawal->id) }}">
                     <center class="text-3xl font-semibold">Edit Withdrawal</center>
+
                     @csrf
-                    @method('PUT')  {{-- Use PUT method for updating --}}
+                    @method('PUT')
 
                     <div class="form-group">
                         <label for="amount">Amount:</label>
@@ -42,5 +44,10 @@
                 </form>
             </div>
         </section>
+
+        <section class="h-full z-30 sticky">
+            @include('layouts.stabilizer-sidebar')
+        </section>
+
     </div>
 </x-app-layout>

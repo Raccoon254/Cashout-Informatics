@@ -39,7 +39,7 @@
                     @foreach($withdrawals as $withdrawal)
                         <tr>
                             <td>{{ $withdrawal->user->name }}</td>
-                            <td>${{ number_format($withdrawal->amount, 2) }}</td>
+                            <td>KSH {{ number_format($withdrawal->amount, 2) }}</td>
                             <td class="{{ $withdrawal->status === 'paid' ? 'bg-red-400' : ($withdrawal->status === 'pending' ? 'bg-white' : 'bg-green-400') }}">
                                 {{ $withdrawal->status }}
                             </td>
@@ -63,5 +63,9 @@
             @endif
 
         </div>
+
+        <section class="h-full z-30 sticky">
+            @include('layouts.stabilizer-sidebar')
+        </section>
     </section>
 </x-app-layout>

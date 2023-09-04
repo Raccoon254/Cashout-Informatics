@@ -14,6 +14,7 @@ use App\Notifications\ReferralBonusNotification;
 use App\Notifications\WithdrawalRequested;
 use App\Notifications\WithdrawalRequestedAdmin;
 use http\Env;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
-    public function sendMoney(Request $request): \Illuminate\Http\RedirectResponse
+    public function sendMoney(Request $request): RedirectResponse
     {
 
         $request->validate([
@@ -111,7 +112,7 @@ class TransactionController extends Controller
 
     //
 
-    public function mpesaDeposit(Request $request): \Illuminate\Http\RedirectResponse
+    public function mpesaDeposit(Request $request): RedirectResponse
     {
         $request->validate([
             'deposit' => 'required|numeric|min:0.01',
@@ -231,10 +232,11 @@ class TransactionController extends Controller
     }
 
     //activate account
-    public function activate(Request $request): \Illuminate\Http\RedirectResponse
+    public function activate(Request $request): RedirectResponse
     {
 
         $email = $request->email;
+        $activaton_fee = ENV('ACTIVATION_FEE');
 
         if (!$email) {
             return back()->with('error', 'Please enter your email');
@@ -251,16 +253,16 @@ class TransactionController extends Controller
             return back()->with('error', 'Your account is already active');
         }
 
-        //deduct 100 from the current auth user balance
+        //deduct from the current auth user balance
         $sender = Auth::user();
 
-        // Check if sender has enough balance
-        if($sender->balance < 100) {
-            return back()->with('error', 'You do not have enough balance');
+        // Check if user has enough balance
+        if($sender->balance < $activaton_fee) {
+            return back()->with('error', 'You do not have enough balance to activate this account, please deposit '.$activaton_fee.' to your account and try again.');
         }
 
         // Update sender balances
-        $sender->balance -= 100;
+        $sender->balance -= $activaton_fee;
         $sender->save();
 
 
@@ -271,7 +273,7 @@ class TransactionController extends Controller
 
             $referrer = User::where('referral_code', $referrer_code)->first();
 
-            $activationAmount =100;
+            $activationAmount = $activaton_fee;
             $referralAmount = 0.7 * $activationAmount;
 
             // Update the referrer's balance
@@ -329,7 +331,7 @@ class TransactionController extends Controller
                 'transaction_type' => 'ACTIVATION',
                 'from' => $sender->id,
                 'to' => 'cashout kenya',
-                'amount' => 100,
+                'amount' => $activaton_fee,
                 'date' => Carbon::now(),
             ]);
 
@@ -340,8 +342,8 @@ class TransactionController extends Controller
             $earning = Earning::create([
                 'user_id' => $steve_id,
                 'from' => $user->id,
-                'amount' => 100,
-                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + 100,
+                'amount' => $activaton_fee,
+                'total_amount' => Earning::where('user_id', $steve_id)->sum('amount') + $activaton_fee,
                 'description' => 'Earnings from '.$user->name.' activation',
                 'type' => 'Activation_no_referral',
             ]);
@@ -371,7 +373,7 @@ class TransactionController extends Controller
     }
 
     //withdraw money
-    public function withdraw(Request $request): \Illuminate\Http\RedirectResponse
+    public function withdraw(Request $request): RedirectResponse
     {
         // Validate the request
         $request->validate([
@@ -389,12 +391,12 @@ class TransactionController extends Controller
             return back()->with('error', 'You do not have enough balance');
         }
 
-        // Check if the amount is greater than or equal to 700
-        if ($amount < 500) {
-            return back()->with('error', 'You cannot withdraw less than KSh. 700');
+        // Check if the amount is greater 200
+        if ($amount < 200) {
+            return back()->with('error', 'You cannot withdraw less than KSH 200');
         }
 
-        // Calculate the fee as 2% of the amount
+        // Calculate the fee as .55% of the amount
         $fee = 0.055 * $amount;
 
         // Deduct the withdrawal amount and fee from the user's balance
