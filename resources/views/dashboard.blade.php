@@ -88,7 +88,7 @@
                                     @foreach(Auth::user()->sent_transactions as $transaction)
                                         <tr>
                                             <td>{{ $transaction->id }}</td>
-                                            <td class="bg-red-500">-{{ $transaction->amount }}</td>
+                                            <td class="bg-red-500 text-gray-50">-{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
                                             <td><i class="fa-solid fa-caret-up"></i> &nbsp; {{ $transaction->recipient->name ?? "CASHOUT" }}</td> <!-- Accessing recipient's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
@@ -99,7 +99,7 @@
                                     @foreach(Auth::user()->received_transactions as $transaction)
                                         <tr>
                                             <td>{{ $transaction->id }}</td>
-                                            <td class="bg-warning">+{{ $transaction->amount }}</td>
+                                            <td class="bg-warning text-gray-50">+{{ $transaction->amount }}</td>
                                             <td>{{ $transaction->transaction_type }}</td>
                                             <td><i class="fa-solid fa-caret-down"></i> &nbsp;{{ $transaction->sender->name?? 'CASHOUT™️' }}</td> <!-- Accessing sender's name -->
                                             <td>{{ $transaction->created_at->diffForHumans() }}</td>
