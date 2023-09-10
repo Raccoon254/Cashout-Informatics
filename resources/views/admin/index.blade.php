@@ -24,12 +24,19 @@
                             Elevated permissions allow you to manage users, posts, and more.
                         </p>
                         <div class="card-actions gap-3 justify-end">
-                            <button class="btn ring ring-blue-700 btn-circle hover:bg-base-100">
-                                <i class="fa-solid fa-user"></i>
-                            </button>
-                            <button class="btn hover:bg-base-100 ring ring-orange-700 btn-circle">
-                                <i class="fa-solid fa-bell"></i>
-                            </button>
+
+                            <a href="{{ route('users.index') }}">
+                                <button class="btn ring ring-blue-700 btn-circle hover:bg-base-100">
+                                    <i class="fa-solid fa-user"></i>
+                                </button>
+                            </a>
+
+                            <a href="{{ route('notifications.index') }}">
+                                <button class="btn hover:bg-base-100 ring ring-orange-700 btn-circle">
+                                    <i class="fa-solid fa-bell"></i>
+                                </button>
+                            </a>
+
                         </div>
                     </div>
                 </div>
