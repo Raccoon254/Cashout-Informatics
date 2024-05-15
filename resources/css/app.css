@@ -53,10 +53,11 @@
 }
 
 .cash-bg{
-    background-image: url('cashout.svg');
+    background-image: url('http://localhost:8000/cashout.svg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-color: black;
 }
 
 .img-box {

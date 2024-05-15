@@ -15,7 +15,7 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             backgroundImage: {
-                'cashout': "url('C:/Apps/cashout/public/images/cashout.svg')",
+                'cashout': "url('/Users/computermart/code/cash/public/cashout.svg')",
             }
         },
     },
